@@ -1,0 +1,759 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte Golden Cham Thai - Septiembre 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: 'Inter', sans-serif;
+      background: #f3f4f6;
+      overflow-x: hidden;
+    }
+
+    #loginScreen {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+    }
+
+    .login-box {
+      background: white;
+      padding: 3rem;
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+      text-align: center;
+      max-width: 400px;
+      width: 90%;
+    }
+
+    .login-box h2 {
+      color: #333;
+      margin-bottom: 1.5rem;
+      font-size: 1.8rem;
+    }
+
+    .login-box input {
+      width: 100%;
+      padding: 1rem;
+      border: 2px solid #e5e7eb;
+      border-radius: 10px;
+      font-size: 1rem;
+      margin-bottom: 1rem;
+      transition: border 0.3s;
+    }
+
+    .login-box input:focus {
+      outline: none;
+      border-color: #667eea;
+    }
+
+    .login-box button {
+      width: 100%;
+      padding: 1rem;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.2s;
+    }
+
+    .login-box button:hover {
+      transform: translateY(-2px);
+    }
+
+    .error-msg {
+      color: #ef4444;
+      font-size: 0.9rem;
+      margin-top: 0.5rem;
+      display: none;
+    }
+
+    #mainContent {
+      display: none;
+      min-height: 100vh;
+      padding: 2rem;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      background: white;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+      overflow: hidden;
+    }
+
+    .report-header {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .logo-container {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      opacity: 0.15;
+    }
+
+    .logo-container img {
+      width: 120px;
+      height: auto;
+      filter: brightness(0) invert(1);
+    }
+
+    .header-content {
+      position: relative;
+      z-index: 1;
+      text-align: center;
+      color: white;
+    }
+
+    .header-content h1 {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .header-content .subtitle {
+      font-size: 1.5rem;
+      opacity: 0.9;
+    }
+
+    .slide {
+      display: none;
+      padding: 3rem;
+      min-height: 600px;
+    }
+
+    .slide.active {
+      display: block;
+      animation: fadeIn 0.5s;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide h2 {
+      font-size: 2.5rem;
+      color: #1f2937;
+      margin-bottom: 2rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+    }
+
+    .metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 2rem;
+    }
+
+    .metric-card {
+      padding: 2rem;
+      border-radius: 15px;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+      transition: transform 0.3s;
+    }
+
+    .metric-card:hover {
+      transform: translateY(-5px);
+    }
+
+    .metric-card .value {
+      font-size: 3rem;
+      font-weight: 800;
+      margin-bottom: 0.5rem;
+    }
+
+    .metric-card .label {
+      font-size: 1.2rem;
+      color: #374151;
+      font-weight: 600;
+    }
+
+    .metric-card .desc {
+      font-size: 0.9rem;
+      color: #6b7280;
+      margin-top: 0.5rem;
+    }
+
+    .chart-container {
+      position: relative;
+      height: 400px;
+      margin: 2rem 0;
+    }
+
+    .charts-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+      gap: 2rem;
+    }
+
+    .info-box {
+      padding: 1.5rem;
+      border-radius: 12px;
+      margin: 1rem 0;
+      border-left: 4px solid;
+    }
+
+    .info-box h3 {
+      font-size: 1.3rem;
+      margin-bottom: 1rem;
+    }
+
+    .info-box ul {
+      list-style: none;
+      padding-left: 0;
+    }
+
+    .info-box li {
+      padding: 0.5rem 0;
+      color: #374151;
+    }
+
+    .navigation {
+      background: #1f2937;
+      padding: 1.5rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: white;
+    }
+
+    .nav-button {
+      padding: 0.75rem 2rem;
+      background: #fbbf24;
+      color: #1f2937;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .nav-button:hover:not(:disabled) {
+      background: #f59e0b;
+      transform: translateY(-2px);
+    }
+
+    .nav-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .slide-counter {
+      text-align: center;
+    }
+
+    .dots {
+      display: flex;
+      gap: 0.5rem;
+      justify-content: center;
+      padding: 1rem;
+      background: #1f2937;
+    }
+
+    .dot {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background: #4b5563;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    .dot.active {
+      background: #fbbf24;
+      width: 30px;
+      border-radius: 6px;
+    }
+
+    .staff-grid {
+      display: grid;
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .staff-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: white;
+      padding: 1rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+
+    .staff-name {
+      font-size: 1.2rem;
+      font-weight: 600;
+    }
+
+    .staff-count {
+      font-size: 1.5rem;
+      font-weight: 800;
+    }
+
+    .keywords-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1rem;
+      margin-top: 1rem;
+    }
+
+    .keyword-card {
+      background: white;
+      padding: 1.5rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      text-align: center;
+    }
+
+    .keyword-card .count {
+      font-size: 2rem;
+      font-weight: 800;
+      color: #10b981;
+    }
+
+    .slide-logo {
+      position: fixed;
+      bottom: 2rem;
+      right: 2rem;
+      opacity: 0.3;
+      z-index: 10;
+      pointer-events: none;
+    }
+
+    .slide-logo img {
+      width: 60px;
+      height: auto;
+    }
+
+    @media (max-width: 768px) {
+      .slide {
+        padding: 1.5rem;
+      }
+      
+      .header-content h1 {
+        font-size: 2rem;
+      }
+
+      .charts-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .navigation {
+        flex-direction: column;
+        gap: 1rem;
+      }
+
+      .logo-container img {
+        width: 80px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="loginScreen">
+    <div class="login-box">
+      <h2>🔒 Acceso Seguro</h2>
+      <p style="color: #6b7280; margin-bottom: 2rem;">Ingresa la contraseña para ver el reporte</p>
+      <input type="password" id="passwordInput" placeholder="Contraseña" onkeypress="if(event.key==='Enter') checkPassword()">
+      <button onclick="checkPassword()">Entrar</button>
+      <p class="error-msg" id="errorMsg">❌ Contraseña incorrecta</p>
+    </div>
+  </div>
+
+  <div id="mainContent">
+    <div class="container">
+      <div class="report-header">
+        <div class="logo-container">
+          <img src="https://i.imgur.com/your-logo.png" alt="NFC Card Logo" onerror="this.style.display='none'">
+        </div>
+        <div class="header-content">
+          <h1>🍜 Golden Cham Thai</h1>
+          <p class="subtitle">Reporte de Reputación Digital - Septiembre 2025</p>
+        </div>
+      </div>
+
+      <div class="slides-container">
+        <div class="slide active" data-slide="1">
+          <h2>📊 Resumen Ejecutivo</h2>
+          <div class="metrics-grid">
+            <div class="metric-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+              <div class="value" style="color: #059669;">13</div>
+              <div class="label">Interacciones Totales</div>
+              <div class="desc">Clientes que usaron el sistema NFC/QR</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+              <div class="value" style="color: #d97706;">11</div>
+              <div class="label">Reseñas Públicas</div>
+              <div class="desc">Publicadas en Google Maps</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+              <div class="value" style="color: #2563eb;">84.6%</div>
+              <div class="label">Tasa de Satisfacción</div>
+              <div class="desc">Clientes satisfechos (4-5 estrellas)</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);">
+              <div class="value" style="color: #dc2626;">2</div>
+              <div class="label">Feedback Privado</div>
+              <div class="desc">Manejado de forma interna</div>
+            </div>
+          </div>
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b;">
+            <h3 style="color: #92400e;">⭐ Promedio de Calificación</h3>
+            <p style="font-size: 3rem; font-weight: 800; color: #d97706; text-align: center;">4.69 / 5.0</p>
+          </div>
+        </div>
+
+        <div class="slide" data-slide="2">
+          <h2>📈 Distribución de Calificaciones</h2>
+          <div class="charts-grid">
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">Por Estrellas</h3>
+              <div class="chart-container">
+                <canvas id="starsChart"></canvas>
+              </div>
+            </div>
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">Por Dispositivo</h3>
+              <div class="chart-container">
+                <canvas id="deviceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="slide" data-slide="3">
+          <h2>📅 Actividad Durante Septiembre</h2>
+          <div class="chart-container" style="height: 500px;">
+            <canvas id="timelineChart"></canvas>
+          </div>
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6;">
+            <h3 style="color: #1e40af;">📊 Insights Temporales</h3>
+            <ul>
+              <li>• <strong>Día más activo:</strong> 25 de septiembre (4 interacciones)</li>
+              <li>• <strong>Semanas clave:</strong> Segunda mitad del mes mostró mayor actividad</li>
+              <li>• <strong>Patrón:</strong> Mayor uso durante fines de semana</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="slide" data-slide="4">
+          <h2>💬 Análisis de Comentarios</h2>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✅ Palabras Clave Positivas</h3>
+            <div class="keywords-grid">
+              <div class="keyword-card">
+                <div class="label">Comida deliciosa</div>
+                <div class="count">8</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Excelente servicio</div>
+                <div class="count">6</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Atención</div>
+                <div class="count">5</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Recomendado</div>
+                <div class="count">3</div>
+                <div class="desc">menciones</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 2rem;">
+            <h3 style="color: #92400e;">👨‍🍳 Personal Destacado</h3>
+            <div class="staff-grid">
+              <div class="staff-item">
+                <span class="staff-name">Diego</span>
+                <span class="staff-count" style="color: #d97706;">6 menciones</span>
+              </div>
+              <div class="staff-item">
+                <span class="staff-name">Azael</span>
+                <span class="staff-count" style="color: #10b981;">3 menciones</span>
+              </div>
+              <div class="staff-item">
+                <span class="staff-name">Nicolás</span>
+                <span class="staff-count" style="color: #3b82f6;">2 menciones</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #fee2e2; border-color: #ef4444; margin-top: 2rem;">
+            <h3 style="color: #991b1b;">⚠️ Áreas de Oportunidad</h3>
+            <ul>
+              <li>• 2 clientes reportaron baja calificación en servicio y alimentos</li>
+              <li>• Comentarios manejados privadamente (no afectaron reputación pública)</li>
+              <li>• Oportunidad de seguimiento directo con estos clientes</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="slide" data-slide="5">
+          <h2>🛡️ Valor del Sistema de Gestión</h2>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✅ Impacto Positivo</h3>
+            <ul style="font-size: 1.1rem;">
+              <li style="padding: 1rem 0;">📈 <strong>11 reseñas 5 estrellas</strong> publicadas en Google Maps</li>
+              <li style="padding: 1rem 0;">🛡️ <strong>100% de feedback negativo</strong> manejado privadamente</li>
+              <li style="padding: 1rem 0;">⭐ <strong>Promedio de 4.69 estrellas</strong> en calificaciones capturadas</li>
+              <li style="padding: 1rem 0;">🎯 <strong>84.6% de satisfacción</strong> de clientes</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 2rem;">
+            <h3 style="color: #1e40af;">🔒 Protección de Reputación</h3>
+            <p style="font-size: 1.1rem; color: #374151; margin-bottom: 1rem;">Sin el sistema NFC/QR:</p>
+            <ul style="font-size: 1.1rem;">
+              <li style="padding: 0.5rem 0;">• Las 2 reseñas negativas estarían <strong>públicas en Google</strong></li>
+              <li style="padding: 0.5rem 0;">• El promedio público sería <strong>menor</strong></li>
+              <li style="padding: 0.5rem 0;">• <strong>No habría oportunidad</strong> de resolver problemas internamente</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b; margin-top: 2rem;">
+            <h3 style="color: #92400e;">💡 ROI del Servicio</h3>
+            <p style="font-size: 1.2rem; color: #374151; font-weight: 600;">
+              <strong>2 crisis de reputación evitadas</strong> + <strong>11 reseñas positivas generadas</strong> = Mayor confianza y visibilidad en Google Maps
+            </p>
+          </div>
+        </div>
+
+        <div class="slide" data-slide="6">
+          <h2>🎯 Recomendaciones y Próximos Pasos</h2>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✅ Fortalezas a Mantener</h3>
+            <ul>
+              <li>• Continuar el excelente servicio de <strong>Diego, Azael y Nicolás</strong></li>
+              <li>• Mantener la calidad de la comida (muy elogiada)</li>
+              <li>• Conservar el ambiente acogedor del restaurante</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">⚡ Oportunidades de Mejora</h3>
+            <ul>
+              <li>• Investigar los 2 casos de feedback negativo (servicio y alimentos)</li>
+              <li>• Implementar seguimiento con clientes insatisfechos</li>
+              <li>• Capacitación adicional para mantener estándares altos</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 1.5rem;">
+            <h3 style="color: #1e40af;">🎯 Acciones Sugeridas</h3>
+            <ul>
+              <li>• <strong>Promover más el sistema NFC/QR</strong> para captar más feedback</li>
+              <li>• Responder a todas las reseñas públicas en Google Maps</li>
+              <li>• Crear un programa de incentivos para clientes que dejen reseñas</li>
+              <li>• Analizar patrones de los días con más interacciones</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #e9d5ff; border-color: #a855f7; margin-top: 1.5rem;">
+            <h3 style="color: #6b21a8;">📊 Métricas para Octubre</h3>
+            <ul>
+              <li>• Objetivo: <strong>15+ interacciones</strong> (aumento del 15%)</li>
+              <li>• Meta: Mantener tasa de satisfacción <strong>arriba del 80%</strong></li>
+              <li>• KPI: Reducir feedback negativo a <strong>menos de 10%</strong></li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <div class="slide-counter">
+          <div style="font-size: 0.9rem; opacity: 0.7;">Diapositiva</div>
+          <div style="font-size: 1.5rem; font-weight: 700;"><span id="currentSlide">1</span> / 6</div>
+        </div>
+        <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+      </div>
+
+      <div class="dots" id="dotsContainer"></div>
+    </div>
+
+    <div class="slide-logo">
+      <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Ccircle cx='100' cy='100' r='80' fill='%23FBBC04'/%3E%3Cpath d='M70 90 Q100 70 130 90 Q100 110 70 90' fill='white'/%3E%3Cpath d='M85 120 Q100 110 115 120' stroke='white' stroke-width='4' fill='none'/%3E%3C/svg%3E" alt="Logo">
+    </div>
+  </div>
+
+  <script>
+    const correctPassword = "golden2025";
+    
+    function checkPassword() {
+      const input = document.getElementById('passwordInput').value;
+      if (input === correctPassword) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('mainContent').style.display = 'block';
+        initCharts();
+      } else {
+        document.getElementById('errorMsg').style.display = 'block';
+        document.getElementById('passwordInput').value = '';
+      }
+    }
+
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[index].classList.add('active');
+      document.getElementById('currentSlide').textContent = index + 1;
+      
+      document.getElementById('prevBtn').disabled = index === 0;
+      document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+      
+      updateDots(index);
+    }
+
+    function changeSlide(direction) {
+      currentSlideIndex += direction;
+      if (currentSlideIndex < 0) currentSlideIndex = 0;
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = totalSlides - 1;
+      showSlide(currentSlideIndex);
+    }
+
+    function createDots() {
+      const container = document.getElementById('dotsContainer');
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => {
+          currentSlideIndex = i;
+          showSlide(i);
+        };
+        container.appendChild(dot);
+      }
+    }
+
+    function updateDots(index) {
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('active', i === index);
+      });
+    }
+
+    function initCharts() {
+      new Chart(document.getElementById('starsChart'), {
+        type: 'bar',
+        data: {
+          labels: ['5 ⭐', '4 ⭐', '1 ⭐'],
+          datasets: [{
+            label: 'Cantidad',
+            data: [10, 1, 2],
+            backgroundColor: ['#10b981', '#fbbf24', '#ef4444'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 2 }
+            }
+          }
+        }
+      });
+
+      new Chart(document.getElementById('deviceChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Android', 'iPhone'],
+          datasets: [{
+            data: [7, 4],
+            backgroundColor: ['#3DDC84', '#555555']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 14 } }
+            }
+          }
+        }
+      });
+
+      new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+          labels: ['1 Sep', '3 Sep', '15 Sep', '21 Sep', '23 Sep', '25 Sep', '28 Sep', '30 Sep'],
+          datasets: [{
+            label: 'Interacciones',
+            data: [1, 1, 2, 1, 1, 4, 1, 1],
+            borderColor: '#fbbf24',
+            backgroundColor: 'rgba(251, 191, 4, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (document.getElementById('loginScreen').style.display !== 'none') return;
+      if (e.key === 'ArrowLeft') changeSlide(-1);
+      if (e.key === 'ArrowRight') changeSlide(1);
+    });
+
+    createDots();
+  </script>
+</body>
+</html>
