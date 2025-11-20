@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte Golden Cham Thai - Octubre 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f3f4f6; overflow-x: hidden; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    .report-box { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; }
+    
+    .report-header {
+      background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .logo-watermark {
+      position: absolute;
+      top: 50%;
+      right: 2rem;
+      transform: translateY(-50%);
+      opacity: 0.2;
+      width: 100px;
+      height: auto;
+    }
+    .header-content { position: relative; z-index: 1; text-align: center; color: white; }
+    .header-content h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .header-content .subtitle { font-size: 1.3rem; opacity: 0.9; }
+
+    .slide { display: none; padding: 3rem; min-height: 550px; }
+    .slide.active { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide h2 { font-size: 2rem; color: #1f2937; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; }
+
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .metric-card { padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .metric-card:hover { transform: translateY(-5px); }
+    .metric-card .value { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .metric-card .label { font-size: 1.1rem; color: #374151; font-weight: 600; }
+    .metric-card .desc { font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; }
+
+    .chart-container { position: relative; height: 350px; margin: 1.5rem 0; }
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+
+    .info-box { padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid; }
+    .info-box h3 { font-size: 1.2rem; margin-bottom: 1rem; }
+    .info-box ul { list-style: none; padding-left: 0; }
+    .info-box li { padding: 0.5rem 0; color: #374151; }
+
+    .staff-grid { display: grid; gap: 0.75rem; margin-top: 1rem; }
+    .staff-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .staff-name { font-size: 1.1rem; font-weight: 600; }
+    .staff-count { font-size: 1.3rem; font-weight: 800; }
+
+    .keywords-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .keyword-card { background: white; padding: 1.25rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+    .keyword-card .count { font-size: 1.8rem; font-weight: 800; color: #10b981; }
+
+    .compare-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .compare-table th, .compare-table td { padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; }
+    .compare-table th { background: #f9fafb; font-weight: 700; color: #374151; }
+    .compare-table td { font-size: 1.1rem; }
+    .trend-up { color: #10b981; font-weight: 700; }
+    .trend-down { color: #ef4444; font-weight: 700; }
+    .trend-equal { color: #6b7280; font-weight: 700; }
+
+    .navigation { background: #1f2937; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; color: white; }
+    .nav-button { padding: 0.75rem 2rem; background: #fbbf24; color: #1f2937; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .nav-button:hover:not(:disabled) { background: #f59e0b; transform: translateY(-2px); }
+    .nav-button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .slide-counter { text-align: center; }
+    .dots { display: flex; gap: 0.5rem; justify-content: center; padding: 1rem; background: #1f2937; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #4b5563; cursor: pointer; transition: all 0.3s; }
+    .dot.active { background: #fbbf24; width: 30px; border-radius: 6px; }
+
+    .slide-logo { position: fixed; bottom: 2rem; right: 2rem; opacity: 0.25; z-index: 10; pointer-events: none; width: 60px; }
+
+    @media (max-width: 768px) {
+      .slide { padding: 1.5rem; }
+      .header-content h1 { font-size: 1.8rem; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .navigation { flex-direction: column; gap: 1rem; }
+      .logo-watermark { width: 70px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="report-box">
+      <div class="report-header">
+        <img src="https://i.ibb.co/4RQnLwz/meta-mkt-logo.png" alt="Logo" class="logo-watermark" onerror="this.style.display='none'">
+        <div class="header-content">
+          <h1>🍜 Golden Cham Thai</h1>
+          <p class="subtitle">Reporte de Reputación Digital - Octubre 2025</p>
+        </div>
+      </div>
+
+      <div class="slides-container">
+        <!-- Slide 1: Resumen Ejecutivo -->
+        <div class="slide active" data-slide="1">
+          <h2>📊 Resumen Ejecutivo</h2>
+          <div class="metrics-grid">
+            <div class="metric-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+              <div class="value" style="color: #059669;">5</div>
+              <div class="label">Interacciones Totales</div>
+              <div class="desc">Clientes que usaron el sistema NFC/QR</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+              <div class="value" style="color: #d97706;">5</div>
+              <div class="label">Reseñas Públicas</div>
+              <div class="desc">Publicadas en Google Maps</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+              <div class="value" style="color: #2563eb;">60%</div>
+              <div class="label">Tasa de Satisfacción</div>
+              <div class="desc">Clientes satisfechos (4-5 estrellas)</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);">
+              <div class="value" style="color: #dc2626;">2</div>
+              <div class="label">Feedback Privado</div>
+              <div class="desc">Manejado de forma interna</div>
+            </div>
+          </div>
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b;">
+            <h3 style="color: #92400e;">⭐ Promedio de Calificación en Google Maps</h3>
+            <p style="font-size: 2.5rem; font-weight: 800; color: #d97706; text-align: center;">5.0 / 5.0</p>
+          </div>
+        </div>
+
+        <!-- Slide 2: Distribución de Calificaciones -->
+        <div class="slide" data-slide="2">
+          <h2>📈 Distribución de Calificaciones</h2>
+          <div class="charts-grid">
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">Por Estrellas (NFC/QR)</h3>
+              <div class="chart-container">
+                <canvas id="starsChart"></canvas>
+              </div>
+            </div>
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">Por Dispositivo</h3>
+              <div class="chart-container">
+                <canvas id="deviceChart"></canvas>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Slide 3: Timeline -->
+        <div class="slide" data-slide="3">
+          <h2>📅 Actividad Durante Octubre</h2>
+          <div class="chart-container" style="height: 400px;">
+            <canvas id="timelineChart"></canvas>
+          </div>
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6;">
+            <h3 style="color: #1e40af;">📊 Insights Temporales</h3>
+            <ul>
+              <li>• <strong>Día más activo:</strong> 9 de octubre (3 interacciones positivas + 1 negativa)</li>
+              <li>• <strong>Concentración:</strong> Mayor actividad en la primera quincena del mes</li>
+              <li>• <strong>Oportunidad:</strong> Promover más el uso del sistema NFC/QR</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 4: Análisis de Comentarios -->
+        <div class="slide" data-slide="4">
+          <h2>💬 Análisis de Comentarios</h2>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✅ Palabras Clave Positivas</h3>
+            <div class="keywords-grid">
+              <div class="keyword-card">
+                <div class="label">Comida deliciosa</div>
+                <div class="count">5</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Excelente servicio</div>
+                <div class="count">4</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Ambiente</div>
+                <div class="count">3</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Chef de Tailandia</div>
+                <div class="count">2</div>
+                <div class="desc">menciones</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">👨‍🍳 Personal Destacado</h3>
+            <div class="staff-grid">
+              <div class="staff-item">
+                <span class="staff-name">Azael</span>
+                <span class="staff-count" style="color: #d97706;">2 menciones</span>
+              </div>
+              <div class="staff-item">
+                <span class="staff-name">Nicolás</span>
+                <span class="staff-count" style="color: #3b82f6;">1 mención</span>
+              </div>
+              <div class="staff-item">
+                <span class="staff-name">Diego</span>
+                <span class="staff-count" style="color: #10b981;">1 mención</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #fee2e2; border-color: #ef4444; margin-top: 1.5rem;">
+            <h3 style="color: #991b1b;">⚠️ Áreas de Oportunidad (Feedback Privado)</h3>
+            <ul>
+              <li>• 1 cliente reportó baja calificación en <strong>alimentos</strong> (9 oct)</li>
+              <li>• 1 cliente reportó baja calificación en <strong>servicio</strong> (11 oct)</li>
+              <li>• Ambos manejados privadamente - no afectaron reputación pública</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 5: Valor del Servicio -->
+        <div class="slide" data-slide="5">
+          <h2>🛡️ Valor del Sistema de Gestión</h2>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✅ Impacto Positivo</h3>
+            <ul style="font-size: 1.05rem;">
+              <li style="padding: 0.75rem 0;">📈 <strong>5 reseñas 5 estrellas</strong> publicadas en Google Maps</li>
+              <li style="padding: 0.75rem 0;">🛡️ <strong>100% de feedback negativo</strong> manejado privadamente</li>
+              <li style="padding: 0.75rem 0;">⭐ <strong>Promedio perfecto de 5.0</strong> en reseñas públicas</li>
+              <li style="padding: 0.75rem 0;">🎯 <strong>2 crisis de reputación evitadas</strong></li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 1.5rem;">
+            <h3 style="color: #1e40af;">🔒 Protección de Reputación</h3>
+            <p style="font-size: 1.05rem; color: #374151; margin-bottom: 1rem;">Sin el sistema NFC/QR:</p>
+            <ul style="font-size: 1.05rem;">
+              <li style="padding: 0.4rem 0;">• Las 2 reseñas negativas estarían <strong>públicas en Google</strong></li>
+              <li style="padding: 0.4rem 0;">• El promedio bajaría de <strong>5.0 a aproximadamente 3.6</strong></li>
+              <li style="padding: 0.4rem 0;">• <strong>No habría oportunidad</strong> de resolver problemas internamente</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">💡 ROI del Servicio</h3>
+            <p style="font-size: 1.1rem; color: #374151; font-weight: 600;">
+              <strong>2 crisis evitadas</strong> + <strong>5 reseñas perfectas</strong> = Reputación intacta en Google Maps
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 6: Recomendaciones -->
+        <div class="slide" data-slide="6">
+          <h2>🎯 Recomendaciones</h2>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✅ Fortalezas a Mantener</h3>
+            <ul>
+              <li>• Calidad de la comida (muy elogiada, mencionan chef de Tailandia)</li>
+              <li>• Servicio de <strong>Azael, Nicolás y Diego</strong></li>
+              <li>• Ambiente del restaurante</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1rem;">
+            <h3 style="color: #92400e;">⚡ Oportunidades de Mejora</h3>
+            <ul>
+              <li>• Investigar los 2 casos de feedback negativo</li>
+              <li>• <strong>Aumentar uso del sistema NFC/QR</strong> (solo 5 interacciones vs 13 en sept)</li>
+              <li>• Capacitación para mantener consistencia en servicio</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 1rem;">
+            <h3 style="color: #1e40af;">🎯 Acciones Sugeridas</h3>
+            <ul>
+              <li>• Promover más la tarjeta NFC/QR con los meseros</li>
+              <li>• Responder a todas las reseñas en Google Maps</li>
+              <li>• Dar seguimiento a clientes insatisfechos</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #e9d5ff; border-color: #a855f7; margin-top: 1rem;">
+            <h3 style="color: #6b21a8;">📊 Métricas para Noviembre</h3>
+            <ul>
+              <li>• Objetivo: <strong>10+ interacciones</strong> NFC/QR</li>
+              <li>• Meta: Mantener tasa de satisfacción <strong>arriba del 70%</strong></li>
+              <li>• KPI: Reducir feedback negativo a <strong>menos del 20%</strong></li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 7: Comparativa -->
+        <div class="slide" data-slide="7">
+          <h2>📊 Comparativa: Septiembre vs Octubre</h2>
+          
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Métrica</th>
+                <th>Septiembre</th>
+                <th>Octubre</th>
+                <th>Tendencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Interacciones NFC/QR</strong></td>
+                <td>13</td>
+                <td>5</td>
+                <td class="trend-down">↓ -61.5%</td>
+              </tr>
+              <tr>
+                <td><strong>Reseñas en Google Maps</strong></td>
+                <td>11</td>
+                <td>5</td>
+                <td class="trend-down">↓ -54.5%</td>
+              </tr>
+              <tr>
+                <td><strong>Feedback Negativo</strong></td>
+                <td>2</td>
+                <td>2</td>
+                <td class="trend-equal">= Igual</td>
+              </tr>
+              <tr>
+                <td><strong>Tasa de Satisfacción</strong></td>
+                <td>84.6%</td>
+                <td>60%</td>
+                <td class="trend-down">↓ -24.6%</td>
+              </tr>
+              <tr>
+                <td><strong>Promedio Google Maps</strong></td>
+                <td>4.69 ⭐</td>
+                <td>5.0 ⭐</td>
+                <td class="trend-up">↑ +0.31</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 2rem;">
+            <h3 style="color: #92400e;">📝 Análisis</h3>
+            <ul>
+              <li>• <strong>Menor volumen de interacciones</strong> - Se recomienda promover más el sistema NFC/QR</li>
+              <li>• <strong>Calidad de reseñas excelente</strong> - 100% de 5 estrellas en Google Maps</li>
+              <li>• <strong>Mismo nivel de quejas privadas</strong> - El sistema sigue protegiendo la reputación</li>
+              <li>• <strong>Prioridad:</strong> Aumentar el uso del sistema para noviembre</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <div class="slide-counter">
+          <div style="font-size: 0.85rem; opacity: 0.7;">Diapositiva</div>
+          <div style="font-size: 1.4rem; font-weight: 700;"><span id="currentSlide">1</span> / 7</div>
+        </div>
+        <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+      </div>
+
+      <div class="dots" id="dotsContainer"></div>
+    </div>
+  </div>
+
+  <img src="https://i.ibb.co/4RQnLwz/meta-mkt-logo.png" alt="Logo" class="slide-logo" onerror="this.style.display='none'">
+
+  <script>
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[index].classList.add('active');
+      document.getElementById('currentSlide').textContent = index + 1;
+      document.getElementById('prevBtn').disabled = index === 0;
+      document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+      updateDots(index);
+    }
+
+    function changeSlide(direction) {
+      currentSlideIndex += direction;
+      if (currentSlideIndex < 0) currentSlideIndex = 0;
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = totalSlides - 1;
+      showSlide(currentSlideIndex);
+    }
+
+    function createDots() {
+      const container = document.getElementById('dotsContainer');
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => { currentSlideIndex = i; showSlide(i); };
+        container.appendChild(dot);
+      }
+    }
+
+    function updateDots(index) {
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    function initCharts() {
+      new Chart(document.getElementById('starsChart'), {
+        type: 'bar',
+        data: {
+          labels: ['5 ⭐', '1 ⭐'],
+          datasets: [{
+            label: 'Cantidad',
+            data: [3, 2],
+            backgroundColor: ['#10b981', '#ef4444'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+      });
+
+      new Chart(document.getElementById('deviceChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['Android', 'iPhone'],
+          datasets: [{ data: [2, 1], backgroundColor: ['#3DDC84', '#555555'] }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { position: 'bottom', labels: { font: { size: 14 } } } }
+        }
+      });
+
+      new Chart(document.getElementById('timelineChart'), {
+        type: 'bar',
+        data: {
+          labels: ['9 Oct (Positivas)', '9 Oct (Negativa)', '11 Oct (Negativa)'],
+          datasets: [{
+            label: 'Interacciones',
+            data: [3, 1, 1],
+            backgroundColor: ['#10b981', '#ef4444', '#ef4444'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: { y: { beginAtZero: true, ticks: { stepSize: 1 } } }
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') changeSlide(-1);
+      if (e.key === 'ArrowRight') changeSlide(1);
+    });
+
+    createDots();
+    initCharts();
+  </script>
+</body>
+</html>
