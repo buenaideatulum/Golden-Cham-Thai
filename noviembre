@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte Golden Cham Thai - Noviembre 2025</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f3f4f6; overflow-x: hidden; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    .report-box { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; }
+    .report-header { background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); padding: 2rem; }
+    .header-content { text-align: center; color: white; }
+    .header-content h1 { font-size: 2.5rem; font-weight: 800; }
+    .header-content .subtitle { font-size: 1.3rem; opacity: 0.9; }
+    .slide { display: none; padding: 3rem; min-height: 550px; }
+    .slide.active { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide h2 { font-size: 2rem; margin-bottom: 2rem; }
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+    .metric-card { padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+    .metric-card .value { font-size: 2.5rem; font-weight: 800; }
+    .metric-card .label { font-weight: 600; }
+    .chart-container { position: relative; height: 350px; }
+    .info-box { padding: 1.5rem; border-radius: 12px; margin-top: 1.5rem; border-left: 4px solid; }
+    .navigation { background: #1f2937; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; color: white; }
+    .nav-button { padding: 0.75rem 2rem; background: #fbbf24; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+    .dots { display: flex; gap: 0.5rem; justify-content: center; padding: 1rem; background: #1f2937; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #4b5563; cursor: pointer; }
+    .dot.active { background: #fbbf24; width: 30px; border-radius: 6px; }
+  </style>
+</head>
+<body>
+<div class="container">
+  <div class="report-box">
+    <div class="report-header">
+      <div class="header-content">
+        <h1>🍜 Golden Cham Thai</h1>
+        <p class="subtitle">Reporte de Reputación Digital – Noviembre 2025</p>
+      </div>
+    </div>
+
+    <div class="slides-container">
+
+      <!-- Slide 1 -->
+      <div class="slide active">
+        <h2>📊 Resumen Ejecutivo</h2>
+        <div class="metrics-grid">
+          <div class="metric-card" style="background:#d1fae5;">
+            <div class="value">13</div>
+            <div class="label">Interacciones NFC / QR</div>
+          </div>
+          <div class="metric-card" style="background:#fef3c7;">
+            <div class="value">23</div>
+            <div class="label">Reseñas Google Maps</div>
+          </div>
+          <div class="metric-card" style="background:#dbeafe;">
+            <div class="value">84.6%</div>
+            <div class="label">Tasa de Satisfacción</div>
+          </div>
+          <div class="metric-card" style="background:#fee2e2;">
+            <div class="value">2</div>
+            <div class="label">Feedback Privado Negativo</div>
+          </div>
+        </div>
+        <div class="info-box" style="background:#fef3c7; border-color:#f59e0b;">
+          <h3>⭐ Promedio Google Maps</h3>
+          <p style="font-size:2.5rem; font-weight:800; text-align:center;">5.0 / 5.0</p>
+        </div>
+      </div>
+
+      <!-- Slide 2 -->
+      <div class="slide">
+        <h2>📈 Distribución de Calificaciones</h2>
+        <div class="chart-container"><canvas id="starsChart"></canvas></div>
+        <div class="chart-container"><canvas id="deviceChart"></canvas></div>
+      </div>
+
+      <!-- Slide 3 -->
+      <div class="slide">
+        <h2>📅 Actividad de Noviembre</h2>
+        <div class="chart-container"><canvas id="timelineChart"></canvas></div>
+      </div>
+
+      <!-- Slide 4 -->
+      <div class="slide">
+        <h2>💬 Insights Clave</h2>
+        <div class="info-box" style="background:#d1fae5; border-color:#10b981;">
+          <ul>
+            <li>✔ 23 reseñas públicas de 5 estrellas</li>
+            <li>✔ Servicio altamente mencionado (Diego, Nicolás y Azael)</li>
+            <li>✔ Cocina auténtica tailandesa destacada</li>
+          </ul>
+        </div>
+        <div class="info-box" style="background:#fee2e2; border-color:#ef4444;">
+          <ul>
+            <li>⚠ 1 feedback privado por comida</li>
+            <li>⚠ 1 feedback privado por servicio</li>
+            <li>🛡 Ambos contenidos, sin impacto público</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 5 -->
+      <div class="slide">
+        <h2>🛡️ Valor del Sistema</h2>
+        <div class="info-box" style="background:#d1fae5; border-color:#10b981;">
+          <ul>
+            <li>⭐ Promedio perfecto mantenido</li>
+            <li>🛡️ 2 crisis de reputación evitadas</li>
+            <li>📈 Mayor volumen de feedback que octubre</li>
+          </ul>
+        </div>
+      </div>
+
+      <!-- Slide 6 -->
+      <div class="slide">
+        <h2>🎯 Recomendaciones</h2>
+        <ul>
+          <li>• Mantener el estándar de servicio</li>
+          <li>• Seguir promoviendo NFC/QR</li>
+          <li>• Responder todas las reseñas públicas</li>
+        </ul>
+      </div>
+
+    </div>
+
+    <div class="navigation">
+      <button class="nav-button" onclick="changeSlide(-1)">← Anterior</button>
+      <button class="nav-button" onclick="changeSlide(1)">Siguiente →</button>
+    </div>
+    <div class="dots" id="dots"></div>
+  </div>
+</div>
+
+<script>
+let index = 0;
+const slides = document.querySelectorAll('.slide');
+function showSlide(i){ slides.forEach(s=>s.classList.remove('active')); slides[i].classList.add('active'); }
+function changeSlide(d){ index=Math.max(0,Math.min(slides.length-1,index+d)); showSlide(index);} 
+new Chart(starsChart,{type:'bar',data:{labels:['5 ⭐'],datasets:[{data:[23],backgroundColor:'#10b981'}]}});
+new Chart(deviceChart,{type:'doughnut',data:{labels:['Android','iPhone'],datasets:[{data:[11,2]}]}});
+new Chart(timelineChart,{type:'bar',data:{labels:['Feedback Positivo','Feedback Negativo'],datasets:[{data:[11,2],backgroundColor:['#10b981','#ef4444']}]} });
+</script>
+</body>
+</html>
