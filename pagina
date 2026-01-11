@@ -1,0 +1,586 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Golden Cham Thai - Auténtica Comida Tailandesa en Tulum</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Cormorant Garamond', 'Georgia', serif;
+            line-height: 1.8;
+            color: #2c2c2c;
+            background: #fafafa;
+        }
+
+        .hero {
+            height: 100vh;
+            background: linear-gradient(135deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            color: #c4a052;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: radial-gradient(circle at 30% 50%, rgba(196,160,82,0.1) 0%, transparent 50%),
+                        radial-gradient(circle at 70% 50%, rgba(196,160,82,0.1) 0%, transparent 50%);
+            animation: pulse 8s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 0.3; }
+            50% { opacity: 0.6; }
+        }
+
+        .hero-content {
+            z-index: 2;
+            max-width: 800px;
+            padding: 20px;
+        }
+
+        .hero h1 {
+            font-size: 5em;
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 8px;
+            text-transform: uppercase;
+            animation: fadeInUp 1s ease;
+            color: #d4af37;
+            text-shadow: 0 0 30px rgba(212,175,55,0.3);
+        }
+
+        .hero .subtitle {
+            font-size: 1.5em;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 3px;
+            opacity: 0.95;
+            animation: fadeInUp 1.2s ease;
+            color: #c4a052;
+        }
+
+        .divider {
+            width: 100px;
+            height: 2px;
+            background: #c4a052;
+            margin: 30px auto;
+        }
+
+        .rating {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(196,160,82,0.15);
+            padding: 15px 30px;
+            border-radius: 2px;
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(196,160,82,0.3);
+            animation: fadeInUp 1.4s ease;
+        }
+
+        .stars {
+            color: #d4af37;
+            font-size: 1.2em;
+            margin-right: 15px;
+            letter-spacing: 3px;
+        }
+
+        .rating-text {
+            font-size: 0.95em;
+            letter-spacing: 1px;
+            color: #c4a052;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        nav {
+            background: rgba(255,255,255,0.98);
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.08);
+            backdrop-filter: blur(10px);
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        nav li {
+            margin: 0 30px;
+        }
+
+        nav a {
+            color: #2c2c2c;
+            text-decoration: none;
+            font-weight: 400;
+            font-size: 0.95em;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+            position: relative;
+        }
+
+        nav a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 1px;
+            background: #c4a052;
+            transition: width 0.3s;
+        }
+
+        nav a:hover::after {
+            width: 100%;
+        }
+
+        nav a:hover {
+            color: #c4a052;
+        }
+
+        section {
+            padding: 100px 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        h2 {
+            text-align: center;
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #2c2c2c;
+            font-weight: 300;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+        }
+
+        .section-intro {
+            text-align: center;
+            max-width: 700px;
+            margin: 0 auto 60px;
+            font-size: 1.1em;
+            color: #666;
+            line-height: 2;
+        }
+
+        .about-content {
+            max-width: 800px;
+            margin: 40px auto;
+            text-align: center;
+            font-size: 1.2em;
+            line-height: 2;
+            color: #555;
+        }
+
+        .features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .feature-card {
+            background: white;
+            padding: 50px 30px;
+            border-radius: 0;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border-top: 2px solid transparent;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-10px);
+            box-shadow: 0 20px 60px rgba(196,160,82,0.15);
+            border-top-color: #c4a052;
+        }
+
+        .feature-icon {
+            font-size: 3.5em;
+            margin-bottom: 20px;
+            opacity: 0.9;
+        }
+
+        .feature-card h3 {
+            color: #2c2c2c;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .feature-card p {
+            color: #777;
+            font-size: 1em;
+            line-height: 1.8;
+        }
+
+        .menu-section {
+            background: white;
+        }
+
+        .menu-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .menu-item {
+            padding: 40px;
+            border: 1px solid #e8e8e8;
+            transition: all 0.3s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 3px;
+            height: 0;
+            background: #c4a052;
+            transition: height 0.3s;
+        }
+
+        .menu-item:hover::before {
+            height: 100%;
+        }
+
+        .menu-item:hover {
+            border-color: #c4a052;
+            transform: translateX(5px);
+        }
+
+        .menu-item h3 {
+            color: #2c2c2c;
+            margin-bottom: 15px;
+            text-align: left;
+            font-size: 1.4em;
+            font-weight: 400;
+            letter-spacing: 1px;
+        }
+
+        .menu-item p {
+            color: #666;
+            font-size: 1em;
+            line-height: 1.9;
+        }
+
+        .drinks-note {
+            text-align: center;
+            margin-top: 60px;
+            padding: 40px;
+            background: #f9f9f9;
+            border-left: 3px solid #c4a052;
+            border-right: 3px solid #c4a052;
+        }
+
+        .drinks-note strong {
+            color: #c4a052;
+            font-size: 1.2em;
+            letter-spacing: 2px;
+        }
+
+        .contact-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 40px;
+            margin-top: 60px;
+        }
+
+        .contact-card {
+            background: white;
+            padding: 50px 30px;
+            text-align: center;
+            border: 1px solid #e8e8e8;
+            transition: all 0.3s;
+        }
+
+        .contact-card:hover {
+            border-color: #c4a052;
+            box-shadow: 0 15px 40px rgba(196,160,82,0.1);
+        }
+
+        .contact-icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            color: #c4a052;
+        }
+
+        .contact-card h3 {
+            color: #2c2c2c;
+            margin-bottom: 20px;
+            font-size: 1.3em;
+            font-weight: 400;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+        }
+
+        .contact-card p {
+            color: #666;
+            line-height: 1.9;
+        }
+
+        .contact-card a {
+            color: #c4a052;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .contact-card a:hover {
+            color: #2c2c2c;
+        }
+
+        .map-container {
+            margin-top: 60px;
+            border: 1px solid #e8e8e8;
+            overflow: hidden;
+        }
+
+        footer {
+            background: #2c2c2c;
+            color: #c4a052;
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        footer h3 {
+            font-size: 2em;
+            margin-bottom: 20px;
+            font-weight: 300;
+            letter-spacing: 4px;
+        }
+
+        .social-links {
+            margin: 30px 0;
+        }
+
+        .social-links a {
+            color: #c4a052;
+            font-size: 1.8em;
+            margin: 0 20px;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .social-links a:hover {
+            transform: translateY(-3px);
+            opacity: 0.7;
+        }
+
+        footer p {
+            color: #999;
+            font-size: 0.95em;
+            letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .hero h1 {
+                font-size: 3em;
+                letter-spacing: 4px;
+            }
+            
+            .hero .subtitle {
+                font-size: 1.2em;
+            }
+            
+            nav ul {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            nav li {
+                margin: 10px 0;
+            }
+
+            h2 {
+                font-size: 2em;
+            }
+
+            section {
+                padding: 60px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="hero">
+        <div class="hero-content">
+            <h1>Golden Cham Thai</h1>
+            <div class="divider"></div>
+            <p class="subtitle">Auténtica Cocina Tailandesa en Tulum</p>
+            <div class="rating">
+                <span class="stars">★ ★ ★ ★ ★</span>
+                <span class="rating-text">4.9 / 5</span>
+            </div>
+        </div>
+    </div>
+
+    <nav>
+        <ul>
+            <li><a href="#inicio">Inicio</a></li>
+            <li><a href="#nosotros">Nosotros</a></li>
+            <li><a href="#menu">Menú</a></li>
+            <li><a href="#contacto">Contacto</a></li>
+        </ul>
+    </nav>
+
+    <section id="nosotros">
+        <div class="container">
+            <h2>Nuestra Esencia</h2>
+            <div class="divider"></div>
+            <div class="about-content">
+                <p>Somos un restaurante auténtico tailandés desde las raíces más pequeñas hasta el último de nuestros ingredientes. Utilizamos verduras y proteínas de la más alta calidad y sobre todo frescas.</p>
+                <p style="margin-top: 30px;">Contamos con chef tailandés con más de 20 años de experiencia y el mejor servicio en Tulum por parte de todo nuestro equipo. Te esperamos con los brazos abiertos para que disfrutes de una experiencia inolvidable y muy grata en el corazón de Tulum.</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-card">
+                    <div class="feature-icon">👨‍🍳</div>
+                    <h3>Chef Maestro</h3>
+                    <p>Más de dos décadas de experiencia en la auténtica gastronomía tailandesa, trayendo los sabores tradicionales de Tailandia a Tulum.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🥗</div>
+                    <h3>Opciones Conscientes</h3>
+                    <p>Amplia selección de platillos vegetarianos y veganos, preparados con el mismo cuidado y autenticidad que nuestra carta completa.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏛️</div>
+                    <h3>Ambiente Refinado</h3>
+                    <p>Espacios cuidadosamente diseñados con terraza al aire libre y área climatizada para tu máximo confort.</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🎵</div>
+                    <h3>Experiencia Musical</h3>
+                    <p>Música en vivo selecta que complementa tu velada con una atmósfera única y sofisticada.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="menu" class="menu-section">
+        <div class="container">
+            <h2>Selección Culinaria</h2>
+            <div class="divider"></div>
+            <p class="section-intro">Cada platillo es una obra de arte culinaria, preparado con ingredientes frescos y técnicas tradicionales tailandesas.</p>
+            
+            <div class="menu-grid">
+                <div class="menu-item">
+                    <h3>Pad Thai</h3>
+                    <p>Tallarines de arroz salteados con salsa de tamarindo, zanahoria, huevo, brotes de soya, cacahuate y cebollín. Nuestro emblema de la tradición tailandesa.</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Curry Rojo Aromático</h3>
+                    <p>Exquisito curry con leche de coco, piña fresca, albahaca tailandesa y tu elección de proteína. Un equilibrio perfecto de sabores especiados.</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Curry Amarillo Clásico</h3>
+                    <p>Curry tradicional con leche de coco, pimiento morrón, calabacita, ejotes, bambú y albahaca aromática.</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Dumplings de Camarón</h3>
+                    <p>Delicadas bolitas de camarón al vapor con ajo, acompañadas de nuestra salsa de soja dulce especial.</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Tom Yum</h3>
+                    <p>Sopa tradicional picante con leche de coco, champiñones frescos, jitomate, hierba limón, cilantro, galanga y lima kafir.</p>
+                </div>
+                <div class="menu-item">
+                    <h3>Mango Sticky Rice</h3>
+                    <p>El final perfecto. Arroz dulce acompañado de mango fresco de temporada y leche de coco, un postre que celebra la simplicidad tailandesa.</p>
+                </div>
+            </div>
+
+            <div class="drinks-note">
+                <p><strong>Selección de Bebidas Premium</strong></p>
+                <p style="margin-top: 15px; color: #666;">Piña Colada · Mezcalita de Maracuyá · Té Tailandés Artesanal · Cerveza Singha Importada</p>
+            </div>
+        </div>
+    </section>
+
+    <section id="contacto">
+        <div class="container">
+            <h2>Visítanos</h2>
+            <div class="divider"></div>
+            <div class="contact-grid">
+                <div class="contact-card">
+                    <div class="contact-icon">📍</div>
+                    <h3>Ubicación</h3>
+                    <p>Av. Tulum Mz.1 Lt.14<br>Entre Saturno y Luna Sur<br>Colonia Centro, Tulum 77760<br>Quintana Roo, México</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">📞</div>
+                    <h3>Reservaciones</h3>
+                    <p><a href="tel:+529841203206">+52 984 120 3206</a></p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">🕐</div>
+                    <h3>Horario</h3>
+                    <p>Lunes a Domingo<br>2:45 PM - 10:00 PM</p>
+                </div>
+                <div class="contact-card">
+                    <div class="contact-icon">✨</div>
+                    <h3>Servicios</h3>
+                    <p>Comida para llevar<br>Entrega a domicilio<br>Reservaciones recomendadas</p>
+                </div>
+            </div>
+
+            <div class="map-container">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3745.5366987!2d-87.46!3d20.21!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zMjDCsDEyJzM2LjAiTiA4N8KwMjcnMzYuMCJX!5e0!3m2!1ses!2smx!4v1234567890" width="100%" height="450" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+            </div>
+        </div>
+    </section>
+
+    <footer>
+        <h3>GOLDEN CHAM THAI</h3>
+        <div class="divider" style="background: #c4a052;"></div>
+        <div class="social-links">
+            <a href="https://www.instagram.com/goldenthai.tulum/" target="_blank" title="Instagram">📸</a>
+            <a href="https://www.tripadvisor.com/Restaurant_Review-g150813-d26265692-Reviews-Golden_Cham_Thai-Tulum_Yucatan_Peninsula.html" target="_blank" title="TripAdvisor">✈️</a>
+        </div>
+        <p>Auténtica cocina tailandesa en el corazón de Tulum</p>
+        <p style="margin-top: 15px;">&copy; 2026 Golden Cham Thai</p>
+    </footer>
+</body>
+</html>
