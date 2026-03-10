@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte Golden Cham Thai - Febrero 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f3f4f6; overflow-x: hidden; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    .report-box { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; }
+    
+    .report-header {
+      background: linear-gradient(135deg, #7c3aed 0%, #5b21b6 100%);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-content { position: relative; z-index: 1; text-align: center; color: white; }
+    .header-content h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .header-content .subtitle { font-size: 1.3rem; opacity: 0.9; }
+
+    .slide { display: none; padding: 3rem; min-height: 550px; }
+    .slide.active { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide h2 { font-size: 2rem; color: #1f2937; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; }
+
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .metric-card { padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .metric-card:hover { transform: translateY(-5px); }
+    .metric-card .value { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .metric-card .label { font-size: 1.1rem; color: #374151; font-weight: 600; }
+    .metric-card .desc { font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; }
+
+    .chart-container { position: relative; height: 350px; margin: 1.5rem 0; }
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+
+    .info-box { padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid; }
+    .info-box h3 { font-size: 1.2rem; margin-bottom: 1rem; }
+    .info-box ul { list-style: none; padding-left: 0; }
+    .info-box li { padding: 0.5rem 0; color: #374151; }
+
+    .staff-grid { display: grid; gap: 0.75rem; margin-top: 1rem; }
+    .staff-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .staff-name { font-size: 1.1rem; font-weight: 600; }
+    .staff-count { font-size: 1.3rem; font-weight: 800; }
+
+    .keywords-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .keyword-card { background: white; padding: 1.25rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+    .keyword-card .count { font-size: 1.8rem; font-weight: 800; color: #10b981; }
+
+    .compare-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .compare-table th, .compare-table td { padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; }
+    .compare-table th { background: #f9fafb; font-weight: 700; color: #374151; }
+    .compare-table td { font-size: 1.1rem; }
+    .trend-up { color: #10b981; font-weight: 700; }
+    .trend-down { color: #ef4444; font-weight: 700; }
+    .trend-equal { color: #6b7280; font-weight: 700; }
+
+    .navigation { background: #1f2937; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; color: white; }
+    .nav-button { padding: 0.75rem 2rem; background: #7c3aed; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .nav-button:hover:not(:disabled) { background: #6d28d9; transform: translateY(-2px); }
+    .nav-button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .slide-counter { text-align: center; }
+    .dots { display: flex; gap: 0.5rem; justify-content: center; padding: 1rem; background: #1f2937; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #4b5563; cursor: pointer; transition: all 0.3s; }
+    .dot.active { background: #7c3aed; width: 30px; border-radius: 6px; }
+
+    .feedback-detail { background: #fff7ed; border: 2px solid #fb923c; border-radius: 10px; padding: 1.5rem; margin-top: 1rem; }
+    .feedback-detail h4 { color: #c2410c; margin-bottom: 1rem; }
+    .rating-row { display: flex; justify-content: space-between; padding: 0.5rem 0; border-bottom: 1px solid #fed7aa; }
+    .rating-row:last-child { border-bottom: none; }
+
+    .review-card { background: white; border-left: 4px solid #10b981; padding: 1rem; margin: 0.75rem 0; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .review-card.negative { border-left-color: #ef4444; }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .review-name { font-weight: 700; color: #1f2937; }
+    .review-text { color: #374151; font-size: 0.95rem; line-height: 1.6; }
+
+    .highlight-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 2rem; border-radius: 15px; border: 3px solid #f59e0b; margin: 2rem 0; text-align: center; }
+
+    @media (max-width: 768px) {
+      .slide { padding: 1.5rem; }
+      .header-content h1 { font-size: 1.8rem; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .navigation { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="report-box">
+      <div class="report-header">
+        <div class="header-content">
+          <h1>🍜 Golden Cham Thai</h1>
+          <p class="subtitle">Reporte de Reputación Digital - Febrero 2026</p>
+        </div>
+      </div>
+
+      <div class="slides-container">
+        <!-- Slide 1: Resumen Ejecutivo -->
+        <div class="slide active" data-slide="1">
+          <h2>📊 Resumen Ejecutivo</h2>
+          
+          <div class="metrics-grid">
+            <div class="metric-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+              <div class="value" style="color: #059669;">3</div>
+              <div class="label">Interacciones NFC/QR</div>
+              <div class="desc">Todas 5⭐ - 100% satisfacción</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+              <div class="value" style="color: #d97706;">10</div>
+              <div class="label">Reseñas Públicas</div>
+              <div class="desc">9 de 5⭐ + 1 de 4⭐</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+              <div class="value" style="color: #2563eb;">100%</div>
+              <div class="label">Tasa Satisfacción NFC</div>
+              <div class="desc">3 de 3 perfectas</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);">
+              <div class="value" style="color: #dc2626;">1</div>
+              <div class="label">Problema Detectado</div>
+              <div class="desc">Sobrecobro + pad thai crudo</div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b;">
+            <h3 style="color: #92400e;">⭐ Promedio de Calificación en Google Maps</h3>
+            <p style="font-size: 2.5rem; font-weight: 800; color: #d97706; text-align: center;">4.9 / 5.0</p>
+            <p style="text-align: center; color: #6b7280; margin-top: 0.5rem;">Primera calificación no perfecta en 4 meses</p>
+          </div>
+
+          <div class="info-box" style="background: #fee2e2; border-color: #ef4444; margin-top: 1.5rem;">
+            <h3 style="color: #991b1b;">⚠️ Alerta Crítica: Reseña 4 Estrellas</h3>
+            <p style="font-size: 1.05rem; color: #374151;">
+              <strong>B C (Local Guide con 242 opiniones)</strong> reporta: <strong>sobrecobro</strong> y <strong>pad thai mal cocido</strong>. Este es un cliente con alta credibilidad. Requiere acción inmediata.
+            </p>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 1.5rem;">
+            <h3 style="color: #065f46;">✅ Logro: 100% Satisfacción en NFC/QR</h3>
+            <p style="font-size: 1.05rem; color: #374151;">
+              Por segundo mes consecutivo, el sistema NFC/QR logra <strong>100% de satisfacción</strong> sin ningún feedback negativo privado.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 2: Distribución -->
+        <div class="slide" data-slide="2">
+          <h2>📈 Distribución y Actividad</h2>
+          <div class="charts-grid">
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">NFC/QR - 100% Satisfacción</h3>
+              <div class="chart-container">
+                <canvas id="nfcChart"></canvas>
+              </div>
+            </div>
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">Google Maps - 90% Satisfacción</h3>
+              <div class="chart-container">
+                <canvas id="googleChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✨ Análisis de Datos</h3>
+            <ul>
+              <li>• <strong>NFC/QR perfecto:</strong> 3 de 3 interacciones con 5⭐ (100%)</li>
+              <li>• <strong>Todas desde Android</strong> - Patrón consistente de dispositivos</li>
+              <li>• <strong>Fechas:</strong> 3 feb, 10 feb, 10 feb (pico a mitad de mes)</li>
+              <li>• <strong>Google Maps:</strong> 9 de 5⭐ + 1 de 4⭐ (90% satisfacción)</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fee2e2; border-color: #ef4444; margin-top: 1.5rem;">
+            <h3 style="color: #991b1b;">⚠️ Preocupación: Caída en NFC/QR</h3>
+            <p style="font-size: 1.05rem; color: #374151;">
+              Las interacciones NFC/QR <strong>cayeron de 5 a 3</strong> (-40% vs enero). Aunque la satisfacción es perfecta, el volumen sigue siendo muy bajo. Objetivo de 8-10 interacciones NO alcanzado.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 3: Personal Destacado -->
+        <div class="slide" data-slide="3">
+          <h2>👨‍🍳 Personal Más Mencionado</h2>
+          
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b;">
+            <h3 style="color: #92400e;">🌟 Top Staff de Febrero</h3>
+            <div class="staff-grid">
+              <div class="staff-item" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
+                <span class="staff-name">🥇 Diego (Mesero)</span>
+                <span class="staff-count" style="color: #d97706;">4 menciones</span>
+              </div>
+              <div class="staff-item">
+                <span class="staff-name">🥈 Eduardo (Bartender/Piso)</span>
+                <span class="staff-count" style="color: #3b82f6;">1 mención</span>
+              </div>
+              <div class="staff-item">
+                <span class="staff-name">🥉 Florencio (Bartender)</span>
+                <span class="staff-count" style="color: #10b981;">1 mención</span>
+              </div>
+            </div>
+            <p style="margin-top: 1rem; color: #92400e; font-weight: 600;">💡 Diego sigue liderando con 40% de menciones (4 de 10 reseñas)</p>
+            <p style="margin-top: 0.5rem; color: #92400e; font-weight: 600;">🆕 Eduardo aparece por primera vez en las reseñas</p>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 1.5rem;">
+            <h3 style="color: #065f46;">✅ Palabras Clave Positivas</h3>
+            <div class="keywords-grid">
+              <div class="keyword-card">
+                <div class="label">Excelente servicio</div>
+                <div class="count">5</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Comida deliciosa</div>
+                <div class="count">4</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Pad Thai</div>
+                <div class="count">2</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Pad Kra Pao</div>
+                <div class="count">1</div>
+                <div class="desc">mención</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Vegetariano</div>
+                <div class="count">1</div>
+                <div class="desc">mención</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Massaman Curry</div>
+                <div class="count">1</div>
+                <div class="desc">mención</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 1.5rem;">
+            <h3 style="color: #1e40af;">💡 Observaciones del Mes</h3>
+            <ul>
+              <li>• <strong>Diego mantiene liderazgo</strong> - Aunque bajó de 79% a 40% de menciones</li>
+              <li>• <strong>Eduardo debuta positivamente</strong> - Nueva adición al equipo destacado</li>
+              <li>• <strong>Florencio consistente</strong> - Mencionado por segundo mes consecutivo</li>
+              <li>• <strong>Pad Thai es el platillo más mencionado</strong> - 2 menciones (1 positiva, 1 negativa)</li>
+              <li>• <strong>Ranjan panda da 7 estrellas</strong> - "7 stars for Diego & Florencio"</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 4: Problema Crítico -->
+        <div class="slide" data-slide="4">
+          <h2>🚨 Análisis: Reseña 4 Estrellas</h2>
+          
+          <div class="info-box" style="background: #fee2e2; border-color: #ef4444;">
+            <h3 style="color: #991b1b;">⚠️ Cliente con Alta Credibilidad</h3>
+            <ul>
+              <li>• <strong>Nombre:</strong> B C</li>
+              <li>• <strong>Perfil:</strong> Local Guide con 242 opiniones y 140 fotos</li>
+              <li>• <strong>Calificación:</strong> ⭐⭐⭐⭐ (4 estrellas)</li>
+              <li>• <strong>Fecha:</strong> Hace 2 semanas (febrero 2026)</li>
+              <li>• <strong>Rango de precio reportado:</strong> $600-700 MXN</li>
+            </ul>
+          </div>
+
+          <div class="feedback-detail" style="margin-top: 1.5rem; background: #fef2f2; border-color: #dc2626;">
+            <h4>📋 Detalles de la Queja</h4>
+            <p style="color: #6b7280; font-size: 0.9rem; margin-bottom: 1rem;">Fuente: Google Maps - Reseña Pública</p>
+            <div style="background: white; padding: 1rem; border-radius: 8px; margin-bottom: 1rem;">
+              <p style="color: #dc2626; font-style: italic; font-weight: 600; line-height: 1.6;">
+                "They <strong>overcharged us</strong> which was annoying and the <strong>pad Thai noodles were undercooked</strong>. The vegetable stir fry was pretty good but quite spicy. Go to the other Thai spot in town!"
+              </p>
+            </div>
+            <div class="rating-row">
+              <span><strong>Problema #1:</strong></span>
+              <span style="color: #dc2626; font-weight: 700;">Sobrecobro (Overcharged)</span>
+            </div>
+            <div class="rating-row">
+              <span><strong>Problema #2:</strong></span>
+              <span style="color: #dc2626; font-weight: 700;">Pad Thai mal cocido (Undercooked)</span>
+            </div>
+            <div class="rating-row">
+              <span><strong>Único positivo:</strong></span>
+              <span style="color: #10b981; font-weight: 700;">Vegetable stir fry bueno (pero muy picante)</span>
+            </div>
+            <div class="rating-row">
+              <span><strong>Recomendación final:</strong></span>
+              <span style="color: #dc2626; font-weight: 700;">❌ "Vayan al otro Thai en el pueblo"</span>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">📊 Gravedad del Problema</h3>
+            <ul>
+              <li>• <strong>Nivel de gravedad: ALTO</strong></li>
+              <li>• <strong>Razón:</strong> Local Guide con 242 opiniones tiene alta credibilidad</li>
+              <li>• <strong>Impacto:</strong> Recomienda ir a la competencia</li>
+              <li>• <strong>Problemas operativos:</strong> Sobrecobro + control de calidad (pad thai crudo)</li>
+              <li>• <strong>Visibilidad:</strong> Reseña pública en Google Maps</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 1.5rem;">
+            <h3 style="color: #1e40af;">🎯 Acciones Inmediatas Requeridas</h3>
+            <ul>
+              <li>• <strong>1. Responder públicamente</strong> - Disculparse y ofrecer solución</li>
+              <li>• <strong>2. Investigar el sobrecobro</strong> - Revisar cuenta de ese día</li>
+              <li>• <strong>3. Capacitación en cocina</strong> - Control de cocción del pad thai</li>
+              <li>• <strong>4. Revisión de precios</strong> - Asegurar que todo el staff cobra correctamente</li>
+              <li>• <strong>5. Contactar al cliente</strong> - Ofrecer invitación para compensar</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 5: Reseñas Destacadas -->
+        <div class="slide" data-slide="5">
+          <h2>⭐ Reseñas de Febrero</h2>
+          
+          <h3 style="color: #374151; margin-bottom: 1rem;">🌟 Reseñas Positivas</h3>
+          
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Ranjan panda</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "Great food, amazing service. One of the <strong>best Thai food I have had</strong>, even coming back from Koh Phi Phi, Phuket, etc in Thailand. <strong>7 stars for Diego & Florencio at the Bar!</strong>"
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">teresa gallaher</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "<strong>Diego was our server and he was so helpful and attentive.</strong> We had the pad thai and the beef pad kra pao and both were fantastic. Just the right spice with excellent flavor. We will definitely come back."
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Ana Martinez (Local Guide)</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "El sitio es súper ⭐️⭐️⭐️⭐️ comida top y lo mejor <strong>una charleta con Eduardo</strong> en los..."
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Lizette Wallace (Local Guide)</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "buen servicio y comida rica!! <strong>diego es el mejor mesero !!!</strong>"
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Zain Khan</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "<strong>Diego was a great server and the food was excellent!!</strong>"
+            </p>
+          </div>
+
+          <h3 style="color: #991b1b; margin-top: 2rem; margin-bottom: 1rem;">⚠️ Reseña Negativa</h3>
+          
+          <div class="review-card negative">
+            <div class="review-header">
+              <span class="review-name">B C (Local Guide - 242 opiniones)</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text" style="color: #dc2626;">
+              "They <strong>overcharged us</strong> which was annoying and the <strong>pad Thai noodles were undercooked</strong>. The vegetable stir fry was pretty good but quite spicy. <strong>Go to the other Thai spot in town!</strong>"
+            </p>
+            <p style="margin-top: 0.75rem; background: #fef2f2; padding: 0.75rem; border-radius: 6px; color: #991b1b; font-size: 0.9rem;">
+              🚨 <strong>CRÍTICO:</strong> Cliente con alta credibilidad recomienda ir a la competencia. Requiere respuesta inmediata y acciones correctivas.
+            </p>
+          </div>
+
+          <h3 style="color: #374151; margin-top: 2rem; margin-bottom: 1rem;">⚠️ Reseña con Área de Mejora</h3>
+          
+          <div class="review-card" style="border-left-color: #f59e0b;">
+            <div class="review-header">
+              <span class="review-name">Rory Walley (Local Guide)</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "Wish they opened before 2pm. <strong>*Not open on Sunday.</strong>"
+            </p>
+            <p style="margin-top: 0.75rem; background: #fef3c7; padding: 0.75rem; border-radius: 6px; color: #92400e; font-size: 0.9rem;">
+              💡 <strong>Insight:</strong> Clientes quieren que abran antes de las 2pm y los domingos.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 6: Comparativa -->
+        <div class="slide" data-slide="6">
+          <h2>📊 Comparativa: Enero vs Febrero</h2>
+          
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Métrica</th>
+                <th><a href="#" onclick="return false;" style="color: #2563eb; text-decoration: underline;">Enero</a></th>
+                <th>Febrero</th>
+                <th>Tendencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Interacciones NFC/QR</strong></td>
+                <td>5</td>
+                <td>3</td>
+                <td class="trend-down">↓ -40%</td>
+              </tr>
+              <tr>
+                <td><strong>Reseñas en Google Maps</strong></td>
+                <td>14</td>
+                <td>10</td>
+                <td class="trend-down">↓ -28.6%</td>
+              </tr>
+              <tr>
+                <td><strong>Feedback Negativo NFC</strong></td>
+                <td>1</td>
+                <td>0</td>
+                <td class="trend-up">↓ -100%</td>
+              </tr>
+              <tr>
+                <td><strong>Tasa de Satisfacción NFC</strong></td>
+                <td>80%</td>
+                <td>100%</td>
+                <td class="trend-up">↑ +20%</td>
+              </tr>
+              <tr>
+                <td><strong>Promedio Google Maps</strong></td>
+                <td>5.0 ⭐</td>
+                <td>4.9 ⭐</td>
+                <td class="trend-down">↓ Primera no perfecta</td>
+              </tr>
+              <tr>
+                <td><strong>Menciones a Diego</strong></td>
+                <td>11</td>
+                <td>4</td>
+                <td class="trend-down">↓ -63.6%</td>
+              </tr>
+              <tr>
+                <td><strong>Reseñas Negativas Públicas</strong></td>
+                <td>1 (laboral)</td>
+                <td>1 (cliente real)</td>
+                <td class="trend-equal">= Igual</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="info-box" style="background: #fee2e2; border-color: #ef4444; margin-top: 2rem;">
+            <h3 style="color: #991b1b;">📉 Tendencias Negativas</h3>
+            <ul>
+              <li>• <strong>-40% en uso de NFC/QR</strong> - De 5 a 3 interacciones</li>
+              <li>• <strong>-28.6% en reseñas públicas</strong> - De 14 a 10 reseñas</li>
+              <li>• <strong>Primera reseña no perfecta</strong> - Promedio baja de 5.0 a 4.9</li>
+              <li>• <strong>-63.6% menciones a Diego</strong> - De 11 a 4 menciones</li>
+              <li>• <strong>Problemas operativos graves</strong> - Sobrecobro + pad thai crudo</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 1.5rem;">
+            <h3 style="color: #065f46;">✅ Aspectos Positivos</h3>
+            <ul>
+              <li>• <strong>100% satisfacción en NFC/QR</strong> - Segundo mes consecutivo</li>
+              <li>• <strong>Cero feedback negativo privado</strong> - Sistema funcionando</li>
+              <li>• <strong>Eduardo debuta positivamente</strong> - Nuevo miembro destacado</li>
+              <li>• <strong>Florencio consistente</strong> - Mencionado nuevamente</li>
+              <li>• <strong>90% de reseñas perfectas</strong> - 9 de 10 son 5 estrellas</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">📝 Análisis</h3>
+            <ul>
+              <li>• <strong>Mes mixto</strong> - Mejoras en NFC/QR pero problemas en servicio real</li>
+              <li>• <strong>Reseña crítica de B C</strong> - Primera queja grave de cliente real en meses</li>
+              <li>• <strong>Sistema NFC/QR estancado</strong> - Muy lejos del objetivo de 8-10</li>
+              <li>• <strong>Control de calidad falla</strong> - Pad thai crudo + sobrecobro</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 7: Recomendaciones -->
+        <div class="slide" data-slide="7">
+          <h2>🎯 Recomendaciones para Marzo 2026</h2>
+          
+          <div class="info-box" style="background: #fee2e2; border-color: #ef4444;">
+            <h3 style="color: #991b1b;">🚨 PRIORIDADES CRÍTICAS INMEDIATAS</h3>
+            <ul>
+              <li>• <strong>1. URGENTE: Responder a B C</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Disculparse públicamente en Google Maps</li>
+                  <li style="font-size: 0.95rem;">- Explicar acciones correctivas tomadas</li>
+                  <li style="font-size: 0.95rem;">- Ofrecer invitación para compensar experiencia</li>
+                  <li style="font-size: 0.95rem;">- <strong>HACER HOY MISMO</strong></li>
+                </ul>
+              </li>
+              <li style="margin-top: 0.75rem;">• <strong>2. Investigar sobrecobro</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Revisar cuenta del cliente B C</li>
+                  <li style="font-size: 0.95rem;">- Capacitar a TODO el staff en cobro correcto</li>
+                  <li style="font-size: 0.95rem;">- Implementar verificación de cuentas antes de entregar</li>
+                </ul>
+              </li>
+              <li style="margin-top: 0.75rem;">• <strong>3. Control de calidad en cocina</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Revisar proceso de cocción del pad thai</li>
+                  <li style="font-size: 0.95rem;">- Capacitación inmediata a equipo de cocina</li>
+                  <li style="font-size: 0.95rem;">- Implementar check de calidad antes de servir</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1rem;">
+            <h3 style="color: #92400e;">⚡ Acciones Operativas</h3>
+            <ul>
+              <li>• <strong>Reactivar sistema NFC/QR</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Caída de -40%, necesita atención urgente</li>
+                  <li style="font-size: 0.95rem;">- Objetivo marzo: mínimo 6 interacciones</li>
+                  <li style="font-size: 0.95rem;">- Capacitar a staff para promoverlo activamente</li>
+                </ul>
+              </li>
+              <li style="margin-top: 0.75rem;">• <strong>Evaluar horarios de apertura</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Cliente solicita abrir antes de 2pm</li>
+                  <li style="font-size: 0.95rem;">- Considerar abrir los domingos</li>
+                  <li style="font-size: 0.95rem;">- Analizar demanda vs costos operativos</li>
+                </ul>
+              </li>
+              <li style="margin-top: 0.75rem;">• <strong>Distribuir carga de servicio</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Diego bajó de 11 a 4 menciones (-63.6%)</li>
+                  <li style="font-size: 0.95rem;">- Pero Eduardo y Florencio están destacando</li>
+                  <li style="font-size: 0.95rem;">- Continuar desarrollando equipo completo</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 1rem;">
+            <h3 style="color: #065f46;">✅ Fortalezas a Mantener</h3>
+            <ul>
+              <li>• <strong>100% satisfacción en NFC/QR</strong> - El sistema sigue funcionando perfectamente</li>
+              <li>• <strong>Diego, Eduardo, Florencio</strong> - Equipo sólido de servicio</li>
+              <li>• <strong>90% de reseñas perfectas</strong> - La mayoría de clientes están muy satisfechos</li>
+              <li>• <strong>Platillos estrella funcionan</strong> - Pad Kra Pao, vegetales, massaman</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #e9d5ff; border-color: #a855f7; margin-top: 1rem;">
+            <h3 style="color: #6b21a8;">📊 Objetivos para Marzo 2026</h3>
+            <ul>
+              <li>• <strong>Recuperar promedio 5.0</strong> - Generar 10+ reseñas perfectas</li>
+              <li>• <strong>NFC/QR:</strong> Mínimo 6 interacciones (recuperar terreno)</li>
+              <li>• <strong>Cero sobrecobros</strong> - Implementar verificación de cuentas</li>
+              <li>• <strong>Control de calidad:</strong> Cero quejas de comida mal cocida</li>
+              <li>• <strong>Responder a B C</strong> - Resolver situación en primera semana</li>
+              <li>• <strong>Evaluar horarios</strong> - Decidir sobre apertura temprana/domingos</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">🎯 Mensaje Final</h3>
+            <p style="font-size: 1.1rem; color: #374151; font-weight: 600; line-height: 1.8;">
+              Febrero presenta un <strong style="color: #dc2626;">desafío crítico</strong>: la primera reseña negativa de un cliente real en meses. El sobrecobro y pad thai mal cocido son <strong style="color: #991b1b;">problemas operativos graves</strong> que requieren acción inmediata. Aunque el NFC/QR tiene 100% satisfacción, su bajo volumen (solo 3) indica que no está captando suficiente feedback. <strong style="color: #7c3aed;">Prioridad #1: Responder a B C HOY</strong>.
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <div class="slide-counter">
+          <div style="font-size: 0.85rem; opacity: 0.7;">Diapositiva</div>
+          <div style="font-size: 1.4rem; font-weight: 700;"><span id="currentSlide">1</span> / 7</div>
+        </div>
+        <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+      </div>
+
+      <div class="dots" id="dotsContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[index].classList.add('active');
+      document.getElementById('currentSlide').textContent = index + 1;
+      document.getElementById('prevBtn').disabled = index === 0;
+      document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+      updateDots(index);
+    }
+
+    function changeSlide(direction) {
+      currentSlideIndex += direction;
+      if (currentSlideIndex < 0) currentSlideIndex = 0;
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = totalSlides - 1;
+      showSlide(currentSlideIndex);
+    }
+
+    function createDots() {
+      const container = document.getElementById('dotsContainer');
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => { currentSlideIndex = i; showSlide(i); };
+        container.appendChild(dot);
+      }
+    }
+
+    function updateDots(index) {
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    function initCharts() {
+      new Chart(document.getElementById('nfcChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['5 Estrellas'],
+          datasets: [{
+            data: [3],
+            backgroundColor: ['#10b981']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 14 } }
+            }
+          }
+        }
+      });
+
+      new Chart(document.getElementById('googleChart'), {
+        type: 'bar',
+        data: {
+          labels: ['5 ⭐', '4 ⭐'],
+          datasets: [{
+            label: 'Reseñas',
+            data: [9, 1],
+            backgroundColor: ['#10b981', '#f59e0b'],
+            borderRadius: 8
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 10,
+              ticks: { stepSize: 2 }
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') changeSlide(-1);
+      if (e.key === 'ArrowRight') changeSlide(1);
+    });
+
+    createDots();
+    initCharts();
+  </script>
+</body>
+</html>
