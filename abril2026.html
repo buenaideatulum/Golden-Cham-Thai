@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reporte Golden Cham Thai - Abril 2026</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: 'Inter', sans-serif; background: #f3f4f6; overflow-x: hidden; }
+    .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+    .report-box { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); overflow: hidden; }
+    
+    .report-header {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      padding: 2rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .header-content { position: relative; z-index: 1; text-align: center; color: white; }
+    .header-content h1 { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .header-content .subtitle { font-size: 1.3rem; opacity: 0.9; }
+
+    .slide { display: none; padding: 3rem; min-height: 550px; }
+    .slide.active { display: block; animation: fadeIn 0.5s; }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .slide h2 { font-size: 2rem; color: #1f2937; margin-bottom: 2rem; display: flex; align-items: center; gap: 0.75rem; }
+
+    .metrics-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-bottom: 2rem; }
+    .metric-card { padding: 1.5rem; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: transform 0.3s; }
+    .metric-card:hover { transform: translateY(-5px); }
+    .metric-card .value { font-size: 2.5rem; font-weight: 800; margin-bottom: 0.5rem; }
+    .metric-card .label { font-size: 1.1rem; color: #374151; font-weight: 600; }
+    .metric-card .desc { font-size: 0.85rem; color: #6b7280; margin-top: 0.5rem; }
+
+    .chart-container { position: relative; height: 350px; margin: 1.5rem 0; }
+    .charts-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(350px, 1fr)); gap: 2rem; }
+
+    .info-box { padding: 1.5rem; border-radius: 12px; margin: 1rem 0; border-left: 4px solid; }
+    .info-box h3 { font-size: 1.2rem; margin-bottom: 1rem; }
+    .info-box ul { list-style: none; padding-left: 0; }
+    .info-box li { padding: 0.5rem 0; color: #374151; }
+
+    .staff-grid { display: grid; gap: 0.75rem; margin-top: 1rem; }
+    .staff-item { display: flex; justify-content: space-between; align-items: center; background: white; padding: 1rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .staff-name { font-size: 1.1rem; font-weight: 600; }
+    .staff-count { font-size: 1.3rem; font-weight: 800; }
+
+    .keywords-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; margin-top: 1rem; }
+    .keyword-card { background: white; padding: 1.25rem; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); text-align: center; }
+    .keyword-card .count { font-size: 1.8rem; font-weight: 800; color: #10b981; }
+
+    .compare-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .compare-table th, .compare-table td { padding: 1rem; text-align: center; border-bottom: 1px solid #e5e7eb; }
+    .compare-table th { background: #f9fafb; font-weight: 700; color: #374151; }
+    .compare-table td { font-size: 1.1rem; }
+    .trend-up { color: #10b981; font-weight: 700; }
+    .trend-down { color: #ef4444; font-weight: 700; }
+    .trend-equal { color: #6b7280; font-weight: 700; }
+
+    .navigation { background: #1f2937; padding: 1.5rem; display: flex; justify-content: space-between; align-items: center; color: white; }
+    .nav-button { padding: 0.75rem 2rem; background: #f59e0b; color: white; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+    .nav-button:hover:not(:disabled) { background: #d97706; transform: translateY(-2px); }
+    .nav-button:disabled { opacity: 0.5; cursor: not-allowed; }
+    .slide-counter { text-align: center; }
+    .dots { display: flex; gap: 0.5rem; justify-content: center; padding: 1rem; background: #1f2937; }
+    .dot { width: 12px; height: 12px; border-radius: 50%; background: #4b5563; cursor: pointer; transition: all 0.3s; }
+    .dot.active { background: #f59e0b; width: 30px; border-radius: 6px; }
+
+    .review-card { background: white; border-left: 4px solid #10b981; padding: 1rem; margin: 0.75rem 0; border-radius: 8px; box-shadow: 0 2px 6px rgba(0,0,0,0.1); }
+    .review-card.warning { border-left-color: #f59e0b; }
+    .review-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.5rem; }
+    .review-name { font-weight: 700; color: #1f2937; }
+    .review-text { color: #374151; font-size: 0.95rem; line-height: 1.6; }
+
+    .highlight-box { background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); padding: 2rem; border-radius: 15px; border: 3px solid #f59e0b; margin: 2rem 0; text-align: center; }
+
+    @media (max-width: 768px) {
+      .slide { padding: 1.5rem; }
+      .header-content h1 { font-size: 1.8rem; }
+      .charts-grid { grid-template-columns: 1fr; }
+      .navigation { flex-direction: column; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="report-box">
+      <div class="report-header">
+        <div class="header-content">
+          <h1>🍜 Golden Cham Thai</h1>
+          <p class="subtitle">Reporte de Reputación Digital - Abril 2026</p>
+        </div>
+      </div>
+
+      <div class="slides-container">
+        <!-- Slide 1: Resumen Ejecutivo -->
+        <div class="slide active" data-slide="1">
+          <h2>📊 Resumen Ejecutivo</h2>
+          
+          <div class="highlight-box">
+            <h3 style="color: #92400e; font-size: 1.5rem; margin-bottom: 1rem;">🎉 ¡MES RÉCORD!</h3>
+            <p style="font-size: 3rem; font-weight: 800; color: #d97706; margin: 1rem 0;">32</p>
+            <p style="font-size: 1.3rem; color: #92400e; font-weight: 600;">Reseñas perfectas de 5 estrellas</p>
+            <p style="color: #78350f; margin-top: 0.5rem;">Mejor mes en la historia del restaurante</p>
+          </div>
+
+          <div class="metrics-grid">
+            <div class="metric-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+              <div class="value" style="color: #059669;">7</div>
+              <div class="label">Interacciones NFC/QR</div>
+              <div class="desc">Todas 5⭐ - 100% satisfacción</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%);">
+              <div class="value" style="color: #d97706;">32</div>
+              <div class="label">Reseñas Públicas</div>
+              <div class="desc">+700% vs marzo (4 reseñas)</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%);">
+              <div class="value" style="color: #2563eb;">100%</div>
+              <div class="label">Tasa Satisfacción</div>
+              <div class="desc">NFC/QR y Google Maps</div>
+            </div>
+            <div class="metric-card" style="background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);">
+              <div class="value" style="color: #059669;">0</div>
+              <div class="label">Problemas Graves</div>
+              <div class="desc">1 reseña con observación menor</div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">⭐ Promedio de Calificación en Google Maps</h3>
+            <p style="font-size: 2.5rem; font-weight: 800; color: #059669; text-align: center;">5.0 / 5.0</p>
+            <p style="text-align: center; color: #6b7280; margin-top: 0.5rem;">32 reseñas perfectas consecutivas 🔥</p>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">🆕 JOEL Emerge Como Nueva Estrella</h3>
+            <p style="font-size: 1.05rem; color: #374151;">
+              <strong>Joel</strong> aparece por primera vez en las reseñas con <strong>11 menciones</strong>, igualando casi a Diego. El equipo se está diversificando exitosamente.
+            </p>
+          </div>
+
+          <div class="info-box" style="background: #fff7ed; border-color: #fb923c; margin-top: 1.5rem;">
+            <h3 style="color: #c2410c;">⚠️ Observación: 1 Reseña con Queja Menor</h3>
+            <p style="font-size: 1.05rem; color: #374151;">
+              Clare reporta que su orden de <strong>delivery fue olvidada</strong>. Sin embargo, el restaurante <strong>respondió rápidamente</strong> (primera respuesta del año).
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 2: Distribución -->
+        <div class="slide" data-slide="2">
+          <h2>📈 Distribución y Actividad</h2>
+          <div class="charts-grid">
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">NFC/QR - 7 Interacciones</h3>
+              <div class="chart-container">
+                <canvas id="nfcChart"></canvas>
+              </div>
+            </div>
+            <div>
+              <h3 style="text-align: center; color: #374151; margin-bottom: 1rem;">Timeline de Abril</h3>
+              <div class="chart-container">
+                <canvas id="timelineChart"></canvas>
+              </div>
+            </div>
+          </div>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✨ Datos Destacados</h3>
+            <ul>
+              <li>• <strong>7 interacciones NFC/QR</strong> - +250% vs marzo (2 interacciones)</li>
+              <li>• <strong>100% satisfacción</strong> - Todas con 5 estrellas</li>
+              <li>• <strong>Pico el 19 de abril</strong> - 5 interacciones en un solo día</li>
+              <li>• <strong>Distribución equilibrada:</strong> 4 iPhone + 3 Android</li>
+              <li>• <strong>32 reseñas públicas</strong> - +700% vs marzo</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">📊 Análisis del Pico del 19 de Abril</h3>
+            <p style="font-size: 1.05rem; color: #374151;">
+              El <strong>19 de abril</strong> registró <strong>5 interacciones</strong> (3 iPhone + 2 Android), el día con mayor actividad NFC/QR en la historia del restaurante. Esto sugiere un evento especial, grupo grande, o personal especialmente activo ese día.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 3: Personal Destacado -->
+        <div class="slide" data-slide="3">
+          <h2>👨‍🍳 Personal Más Mencionado</h2>
+          
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b;">
+            <h3 style="color: #92400e;">🌟 Top Staff de Abril</h3>
+            <div class="staff-grid">
+              <div class="staff-item" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border: 2px solid #f59e0b;">
+                <span class="staff-name">🥇 Diego (Mesero)</span>
+                <span class="staff-count" style="color: #d97706;">15 menciones</span>
+              </div>
+              <div class="staff-item" style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #3b82f6;">
+                <span class="staff-name">🥈 Joel (Mesero) 🆕</span>
+                <span class="staff-count" style="color: #3b82f6;">11 menciones</span>
+              </div>
+              <div class="staff-item">
+                <span class="staff-name">🥉 Azael</span>
+                <span class="staff-count" style="color: #10b981;">2 menciones</span>
+              </div>
+            </div>
+            <p style="margin-top: 1rem; color: #92400e; font-weight: 600;">🆕 <strong>JOEL debuta con fuerza</strong> - 11 menciones en su primer mes visible</p>
+            <p style="margin-top: 0.5rem; color: #059669; font-weight: 600;">✅ <strong>Equipo diversificado</strong> - Ya no hay dependencia total de Diego</p>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 1.5rem;">
+            <h3 style="color: #065f46;">✅ Palabras Clave Positivas</h3>
+            <div class="keywords-grid">
+              <div class="keyword-card">
+                <div class="label">Excelente/Delicioso</div>
+                <div class="count">22</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Great Service</div>
+                <div class="count">15</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Highly Recommended</div>
+                <div class="count">8</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Authentic Thai</div>
+                <div class="count">5</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Pad Thai</div>
+                <div class="count">4</div>
+                <div class="desc">menciones</div>
+              </div>
+              <div class="keyword-card">
+                <div class="label">Favorito en Tulum</div>
+                <div class="count">3</div>
+                <div class="desc">menciones</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 1.5rem;">
+            <h3 style="color: #1e40af;">💡 Observaciones Clave</h3>
+            <ul>
+              <li>• <strong>Diego mantiene liderazgo</strong> - 15 menciones (47% de reseñas)</li>
+              <li>• <strong>Joel irrumpe con fuerza</strong> - 11 menciones (34% de reseñas)</li>
+              <li>• <strong>Azael mencionado positivamente</strong> - Incluyendo como "owner"</li>
+              <li>• <strong>"Favorite spot in Tulum"</strong> - Aparece 3 veces</li>
+              <li>• <strong>Clientes que regresan</strong> - "2nd time" / "every year I come"</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 4: Reseña con Observación -->
+        <div class="slide" data-slide="4">
+          <h2>⚠️ Análisis: Reseña de Clare</h2>
+          
+          <div class="review-card warning">
+            <div class="review-header">
+              <span class="review-name">Clare (Local Guide - 11 opiniones)</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐ Hace 7 días</span>
+            </div>
+            <p class="review-text">
+              "I ordered on tomato because of all the good reviews on here. I absolutely love Thai food so I was so excited. Though..."
+            </p>
+            <p style="margin-top: 1rem; background: #fff7ed; padding: 0.75rem; border-radius: 6px; color: #c2410c; font-weight: 600;">
+              ⚠️ Problema: <strong>Orden de delivery olvidada en la app Tomato</strong>
+            </p>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 1.5rem;">
+            <h3 style="color: #065f46;">✅ RESPUESTA DEL RESTAURANTE (Primera del año)</h3>
+            <div style="background: white; padding: 1rem; border-radius: 8px; margin-top: 1rem; border-left: 4px solid #10b981;">
+              <p style="color: #374151; line-height: 1.8; font-size: 0.95rem;">
+                <strong style="color: #059669;">Golden Cham Thai (Propietario) - Hace 7 días:</strong><br><br>
+                <em>"Ma'am, good afternoon. We spoke with you via WhatsApp and through the app where you placed your takeout order. We..."</em>
+              </p>
+            </div>
+            <p style="margin-top: 1rem; color: #059669; font-weight: 600;">
+              ✅ El restaurante <strong>respondió rápidamente</strong> y <strong>se comunicó directamente</strong> con la cliente
+            </p>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">📊 Impacto en Reputación</h3>
+            <ul>
+              <li>• <strong>Gravedad: BAJA</strong> - Mantuvo 5 estrellas a pesar del problema</li>
+              <li>• <strong>Causa:</strong> Error en app de terceros (Tomato), no del restaurante</li>
+              <li>• <strong>Respuesta:</strong> Rápida y directa vía WhatsApp y app</li>
+              <li>• <strong>Resultado:</strong> Cliente dejó 5⭐ y el problema fue resuelto</li>
+              <li>• <strong>Aprendizaje:</strong> Primera respuesta pública del restaurante en 2026</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #dbeafe; border-color: #3b82f6; margin-top: 1.5rem;">
+            <h3 style="color: #1e40af;">💡 Recomendación</h3>
+            <p style="font-size: 1.05rem; color: #374151;">
+              <strong>Excelente manejo de la situación.</strong> La respuesta rápida y la comunicación directa con la cliente evitaron que el problema escalara. Se recomienda <strong>continuar respondiendo</strong> a todas las reseñas para mantener engagement.
+            </p>
+          </div>
+        </div>
+
+        <!-- Slide 5: Reseñas Destacadas -->
+        <div class="slide" data-slide="5">
+          <h2>⭐ Reseñas Más Destacadas</h2>
+          
+          <h3 style="color: #374151; margin-bottom: 1rem;">🌟 Comentarios Excepcionales</h3>
+          
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Michael Shafer (Local Guide - 89 opiniones)</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "<strong>This was our favorite spot to eat in Tulum.</strong> We've both been to Thailand multiple times and eating here was like going..."
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Erika Acevedo</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "This place is a must! <strong>Every year that I come into town I make sure to get something to eat from here.</strong> The food only gets better and better. Hospitality is unlike any other."
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Wayne Gluyas (Local Guide - 127 opiniones)</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "Food is delicious! <strong>Great service by our waiter Diego. This is our 2nd time eating here and will definitely be back!</strong>"
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Lauren Jardine</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "<strong>Top tier food and service. Diego and the teams were excellent. Portions were also large.</strong> I took half to go. Highly recommend"
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Matthew Graves</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "Let us be real. It is difficult to drop international money on a meal when there are amazing fish tacos for 60 pesos... <strong>but this restaurant is worth every peso.</strong>"
+            </p>
+          </div>
+
+          <div class="review-card">
+            <div class="review-header">
+              <span class="review-name">Priscilla Colon</span>
+              <span style="color: #f59e0b;">⭐⭐⭐⭐⭐</span>
+            </div>
+            <p class="review-text">
+              "I loved the food, and <strong>Azael was an amazing server. He even took the time to teach me some Thai.</strong>"
+            </p>
+          </div>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 2rem;">
+            <h3 style="color: #065f46;">✨ Insights de las Reseñas</h3>
+            <ul>
+              <li>• <strong>Clientes leales</strong> - Múltiples menciones de "favorite", "2nd time", "every year"</li>
+              <li>• <strong>Comparación con Tailandia</strong> - "Like going to Thailand" (altamente favorable)</li>
+              <li>• <strong>Valor por dinero</strong> - "Worth every peso" a pesar de precios altos</li>
+              <li>• <strong>Porciones generosas</strong> - "Portions were large"</li>
+              <li>• <strong>Experiencia cultural</strong> - Azael enseñando Thai</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 6: Comparativa -->
+        <div class="slide" data-slide="6">
+          <h2>📊 Comparativa: Marzo vs Abril</h2>
+          
+          <table class="compare-table">
+            <thead>
+              <tr>
+                <th>Métrica</th>
+                <th>Marzo</th>
+                <th>Abril</th>
+                <th>Tendencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Interacciones NFC/QR</strong></td>
+                <td>2</td>
+                <td>7</td>
+                <td class="trend-up">↑ +250%</td>
+              </tr>
+              <tr>
+                <td><strong>Reseñas en Google Maps</strong></td>
+                <td>4</td>
+                <td>32</td>
+                <td class="trend-up">↑ +700%</td>
+              </tr>
+              <tr>
+                <td><strong>Feedback Negativo NFC</strong></td>
+                <td>0</td>
+                <td>0</td>
+                <td class="trend-equal">= Perfecto</td>
+              </tr>
+              <tr>
+                <td><strong>Tasa de Satisfacción NFC</strong></td>
+                <td>100%</td>
+                <td>100%</td>
+                <td class="trend-equal">= Perfecto</td>
+              </tr>
+              <tr>
+                <td><strong>Promedio Google Maps</strong></td>
+                <td>5.0 ⭐</td>
+                <td>5.0 ⭐</td>
+                <td class="trend-equal">= Perfecto</td>
+              </tr>
+              <tr>
+                <td><strong>Menciones a Diego</strong></td>
+                <td>4 (100%)</td>
+                <td>15 (47%)</td>
+                <td class="trend-up">↑ Mejor distribución</td>
+              </tr>
+              <tr>
+                <td><strong>Personal mencionado</strong></td>
+                <td>1 (solo Diego)</td>
+                <td>3 (Diego, Joel, Azael)</td>
+                <td class="trend-up">↑ Equipo diversificado</td>
+              </tr>
+            </tbody>
+          </table>
+
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981; margin-top: 2rem;">
+            <h3 style="color: #065f46;">🎉 Logros Extraordinarios de Abril</h3>
+            <ul>
+              <li>• <strong>+700% en reseñas</strong> - De 4 a 32 reseñas (récord histórico)</li>
+              <li>• <strong>+250% en NFC/QR</strong> - De 2 a 7 interacciones</li>
+              <li>• <strong>Joel emerge con fuerza</strong> - 11 menciones en debut</li>
+              <li>• <strong>32 reseñas perfectas</strong> - Todas 5 estrellas consecutivas</li>
+              <li>• <strong>Primera respuesta pública</strong> - Manejo efectivo de situación</li>
+              <li>• <strong>Equipo diversificado</strong> - 3 miembros mencionados vs 1</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">📝 Análisis del Éxito</h3>
+            <p style="font-size: 1.05rem; color: #374151; margin-bottom: 1rem;">
+              Abril marca un <strong>punto de inflexión histórico</strong> para el restaurante:
+            </p>
+            <ul>
+              <li>• <strong>Temporada alta</strong> - Incremento natural en tráfico</li>
+              <li>• <strong>Joel suma al equipo</strong> - Reduce dependencia de Diego</li>
+              <li>• <strong>Momentum positivo</strong> - Clientes leales regresan y recomiendan</li>
+              <li>• <strong>Sistema NFC/QR reactivado</strong> - Personal lo está promoviendo</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Slide 7: Recomendaciones -->
+        <div class="slide" data-slide="7">
+          <h2>🎯 Recomendaciones para Mayo 2026</h2>
+          
+          <div class="info-box" style="background: #d1fae5; border-color: #10b981;">
+            <h3 style="color: #065f46;">✅ Fortalezas a Mantener</h3>
+            <ul>
+              <li>• <strong>Dupla Diego + Joel</strong> - Está funcionando excepcionalmente bien</li>
+              <li>• <strong>Responder a reseñas</strong> - Primera respuesta del año fue exitosa</li>
+              <li>• <strong>Sistema NFC/QR activo</strong> - 7 interacciones es el camino correcto</li>
+              <li>• <strong>Calidad consistente</strong> - 32 reseñas perfectas lo demuestran</li>
+              <li>• <strong>Porciones generosas</strong> - Clientes lo valoran positivamente</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #fef3c7; border-color: #f59e0b; margin-top: 1rem;">
+            <h3 style="color: #92400e;">⚡ Prioridades para Mayo</h3>
+            <ul>
+              <li>• <strong>Mantener momentum</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Objetivo: mínimo 25 reseñas (no bajar de abril)</li>
+                  <li style="font-size: 0.95rem;">- Continuar promoviendo NFC/QR activamente</li>
+                  <li style="font-size: 0.95rem;">- Mantener servicio de excelencia</li>
+                </ul>
+              </li>
+              <li style="margin-top: 0.75rem;">• <strong>Continuar respondiendo a reseñas</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Responder a TODAS las reseñas en 48 horas</li>
+                  <li style="font-size: 0.95rem;">- Agradecer y mencionar puntos específicos</li>
+                  <li style="font-size: 0.95rem;">- Reforzar relación con clientes</li>
+                </ul>
+              </li>
+              <li style="margin-top: 0.75rem;">• <strong>Desarrollar a Azael</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Solo 2 menciones vs 15 de Diego y 11 de Joel</li>
+                  <li style="font-size: 0.95rem;">- Potenciar su rol visible en el servicio</li>
+                  <li style="font-size: 0.95rem;">- Aprovechar que enseña Thai (diferenciador único)</li>
+                </ul>
+              </li>
+              <li style="margin-top: 0.75rem;">• <strong>Monitorear apps de delivery</strong>
+                <ul style="padding-left: 1.5rem; margin-top: 0.5rem;">
+                  <li style="font-size: 0.95rem;">- Verificar órdenes en Tomato regularmente</li>
+                  <li style="font-size: 0.95rem;">- Crear protocolo de seguimiento</li>
+                  <li style="font-size: 0.95rem;">- Evitar órdenes olvidadas</li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: #e9d5ff; border-color: #a855f7; margin-top: 1rem;">
+            <h3 style="color: #6b21a8;">📊 Objetivos para Mayo 2026</h3>
+            <ul>
+              <li>• <strong>NFC/QR:</strong> Mínimo 7 interacciones (mantener nivel)</li>
+              <li>• <strong>Reseñas públicas:</strong> Mínimo 25 (mantener momentum)</li>
+              <li>• <strong>Respuestas:</strong> 100% de reseñas respondidas en 48h</li>
+              <li>• <strong>Mantener:</strong> 5.0 promedio y 100% satisfacción NFC</li>
+              <li>• <strong>Personal:</strong> Al menos 3 miembros mencionados</li>
+              <li>• <strong>Azael:</strong> Mínimo 5 menciones (desarrollarlo)</li>
+            </ul>
+          </div>
+
+          <div class="info-box" style="background: linear-gradient(135deg, #fef3c7 0%, #fde68a 100%); border-color: #f59e0b; margin-top: 1.5rem;">
+            <h3 style="color: #92400e;">🎯 Mensaje Final</h3>
+            <p style="font-size: 1.1rem; color: #374151; font-weight: 600; line-height: 1.8;">
+              Abril fue <strong style="color: #f59e0b;">EL MEJOR MES EN LA HISTORIA</strong> de Golden Cham Thai con 32 reseñas perfectas (+700% vs marzo). Joel emerge como <strong style="color: #d97706;">nueva estrella</strong> con 11 menciones, diversificando exitosamente el equipo. El sistema NFC/QR se reactivó (+250%) y la primera respuesta pública fue <strong style="color: #059669;">manejada perfectamente</strong>. <strong style="color: #ec4899;">El reto: mantener este momentum extraordinario en mayo.</strong>
+            </p>
+          </div>
+        </div>
+      </div>
+
+      <div class="navigation">
+        <button class="nav-button" id="prevBtn" onclick="changeSlide(-1)">← Anterior</button>
+        <div class="slide-counter">
+          <div style="font-size: 0.85rem; opacity: 0.7;">Diapositiva</div>
+          <div style="font-size: 1.4rem; font-weight: 700;"><span id="currentSlide">1</span> / 7</div>
+        </div>
+        <button class="nav-button" id="nextBtn" onclick="changeSlide(1)">Siguiente →</button>
+      </div>
+
+      <div class="dots" id="dotsContainer"></div>
+    </div>
+  </div>
+
+  <script>
+    let currentSlideIndex = 0;
+    const slides = document.querySelectorAll('.slide');
+    const totalSlides = slides.length;
+
+    function showSlide(index) {
+      slides.forEach(s => s.classList.remove('active'));
+      slides[index].classList.add('active');
+      document.getElementById('currentSlide').textContent = index + 1;
+      document.getElementById('prevBtn').disabled = index === 0;
+      document.getElementById('nextBtn').disabled = index === totalSlides - 1;
+      updateDots(index);
+    }
+
+    function changeSlide(direction) {
+      currentSlideIndex += direction;
+      if (currentSlideIndex < 0) currentSlideIndex = 0;
+      if (currentSlideIndex >= totalSlides) currentSlideIndex = totalSlides - 1;
+      showSlide(currentSlideIndex);
+    }
+
+    function createDots() {
+      const container = document.getElementById('dotsContainer');
+      for (let i = 0; i < totalSlides; i++) {
+        const dot = document.createElement('div');
+        dot.className = 'dot';
+        if (i === 0) dot.classList.add('active');
+        dot.onclick = () => { currentSlideIndex = i; showSlide(i); };
+        container.appendChild(dot);
+      }
+    }
+
+    function updateDots(index) {
+      const dots = document.querySelectorAll('.dot');
+      dots.forEach((dot, i) => dot.classList.toggle('active', i === index));
+    }
+
+    function initCharts() {
+      new Chart(document.getElementById('nfcChart'), {
+        type: 'doughnut',
+        data: {
+          labels: ['5 Estrellas'],
+          datasets: [{
+            data: [7],
+            backgroundColor: ['#10b981']
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: { font: { size: 14 } }
+            }
+          }
+        }
+      });
+
+      new Chart(document.getElementById('timelineChart'), {
+        type: 'line',
+        data: {
+          labels: ['2 Abr', '11 Abr', '19 Abr', '25 Abr'],
+          datasets: [{
+            label: 'Interacciones',
+            data: [1, 1, 5, 1],
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245, 158, 11, 0.1)',
+            borderWidth: 3,
+            fill: true,
+            tension: 0.4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { display: false } },
+          scales: {
+            y: {
+              beginAtZero: true,
+              max: 6,
+              ticks: { stepSize: 1 }
+            }
+          }
+        }
+      });
+    }
+
+    document.addEventListener('keydown', (e) => {
+      if (e.key === 'ArrowLeft') changeSlide(-1);
+      if (e.key === 'ArrowRight') changeSlide(1);
+    });
+
+    createDots();
+    initCharts();
+  </script>
+</body>
+</html>
